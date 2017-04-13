@@ -1,13 +1,18 @@
 #include "stdafx.h"
 #include "Photon.h"
 
+Photon::Photon() {
+	wavelength = 720;
+	angle = 0;
+}
+
 Photon::Photon(int f, float a) {
-	frequency = f;
+	wavelength = f;
 	angle = a;
 }
 
-int Photon::getFrequency() {
-	return frequency;
+int Photon::getWavelength() {
+	return wavelength;
 }
 
 float Photon::getAngle() {

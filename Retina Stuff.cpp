@@ -85,7 +85,7 @@ int main()
 	//Low Light
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			x[i][j]->setInputs(25,600,50);
+			//x[i][j]->addPhotons();
 			x[i][j]->update(0);
 		}
 	}
@@ -104,7 +104,7 @@ int main()
 		}
 	}
 
-	std::cout << "\n\nLow Light Light:\n\n";
+	std::cout << "\n\nLow Light:\n\n";
 	std::cout << "\nRod Potentials: \n\n";
 	for (int i = 0; i < rows; ++i) {
 		for (int j = i%2; j < cols; j+=2) {
@@ -133,7 +133,7 @@ int main()
 	std::cout << "\n\nHeavy Light:\n\n";
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			x[i][j]->setInputs(400, 600, 50);
+			//x[i][j]->addPhotons();
 			x[i][j]->update(0);
 		}
 	}

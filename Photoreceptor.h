@@ -1,21 +1,32 @@
 #pragma once
 #include "stdafx.h"
 #include "Neuron.h"
+#include "Photon.h"
+#include <vector>
+
 #ifndef PHOTORECEPTOR
 #define PHOTORECEPTOR
 
 class Photoreceptor : public Neuron {
+public:
+	enum ReceptorType {
+		RED,
+		GREEN,
+		BLUE,
+		ROD,
+	};
 protected:
 	//double eccentricity;
 	//double locationAngle; //Relative to straight up
-	int photonsHit;
-	int photonFrequency;
+	std::vector<Photon> photonQueue;
+	ReceptorType receptorType;
 
 public:
 	virtual const char getType() override; // returns the type 
-	virtual const char getRGB(); // creates a virtual method which is overriden by rod's and cones
+	virtual const char getRGB(); // creates a virtual method which is overriden by rods and cones
+	static bool isAbsored(Photon p, ReceptorType t);
 	Photoreceptor();
-	void setInputs(int photons, int frequency, int lightAngle);
+	void addPhotons(std::vector<Photon> newPhotons);
 	virtual void update(float elapsedSeconds);
 };
 

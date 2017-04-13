@@ -10,12 +10,10 @@ const char Rod::getRGB() {
 	return ' ';
 }
 
-//void Rod::setInputs(int lightIntensity, int lightFrequency, int lightAngle) {
-//TODO: Actually do something with this
-//}
+Rod::Rod() {
+	receptorType = Photoreceptor::ROD;
+}
 
  void Rod::update(float elapsedSeconds) {
-	double num = 1.0 / ((photonsHit / 25.0) + 1.0); //Arbitrary Numbers; needs real data
-	num = 1.0 - num;
-	cellPotential = num*(cellMax - cellMin) + cellMin;
+	 Photoreceptor::update(elapsedSeconds);
 }

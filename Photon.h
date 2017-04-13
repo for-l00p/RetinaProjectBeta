@@ -4,14 +4,15 @@
 
 class Photon {
 private:
-	int frequency;
+	int wavelength;
 	float angle;
 
 public:
+	Photon();
 	Photon(int f, float a);
-	int getFrequency();
+	int getWavelength();
 	float getAngle();
 
 };
 
-#endif PHOTON
+#endif 

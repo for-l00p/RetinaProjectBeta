@@ -8,4 +8,4 @@ class Ganglion : public Neuron {
 	Ganglion();
 };
 
-#endif GANGLION
+#endif

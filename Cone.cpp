@@ -2,32 +2,22 @@
 #include "Cone.h"
 #include "Photon.h"
 
-Cone::Cone(ConeType t) {
-	coneType = t; // stores RGB value which is unique to the cone
-
-}
-
-bool Cone::isAbsored(Photon p, Cone::ConeType t) {
-
+Cone::Cone(ReceptorType t) {
+	receptorType = t; // stores RGB value which is unique to the cone
 }
 
  const char Cone::getRGB() {
-	if (coneType == RED) {
+	if (receptorType == RED) {
 		return 'R';
 	}
-	else if (coneType == BLUE) {
+	else if (receptorType == BLUE) {
 		return 'B';
 	}
 	return 'G';
 }
-//void Cone::setInputs(int lightIntensity, int lightFrequency, int lightAngle) {
-//TODO: Actually do something with this
-//}
 
 void Cone::update(float elapsedSeconds) {
-	double num = 1.0 / ((photonsHit / 200.0) + 1.0); //Arbitrary Numbers; needs real data
-	num = 1.0 - num;
-	cellPotential = num*(cellMax - cellMin) + cellMin;
+	Photoreceptor::update(elapsedSeconds);
 }
 
 const char Cone::getType() {

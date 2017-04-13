@@ -27,4 +27,4 @@ public:
 	double getPotential();
 };
 
-#endif // NEURON
+#endif 
