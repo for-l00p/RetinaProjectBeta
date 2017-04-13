@@ -1,10 +1,16 @@
 #include "stdafx.h"
 #include "Cone.h"
+#include "Photon.h"
 
 Cone::Cone(ConeType t) {
 	coneType = t; // stores RGB value which is unique to the cone
 
 }
+
+bool Cone::isAbsored(Photon p, Cone::ConeType t) {
+
+}
+
  const char Cone::getRGB() {
 	if (coneType == RED) {
 		return 'R';

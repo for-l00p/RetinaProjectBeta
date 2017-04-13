@@ -1,5 +1,6 @@
 #pragma once
 #include "Photoreceptor.h"
+#include "Photon.h"
 
 #ifndef CONE
 #define CONE
@@ -17,6 +18,8 @@ public:
 	static constexpr double PEAK_DENSITY() { return 199.2f; }
 	static constexpr double PERIPHERY_DENSITY() { return 3.6f; }
 	static constexpr double MEAN_DENSITY_CONSTANT() { return 15; } //Ignore these for now
+
+	static bool isAbsored(Photon p, ConeType t);
 	Cone(ConeType t);
 	virtual const char getRGB() override;
 	//void setInputs(int lightIntensity, int lightFrequency, int lightAngle);
