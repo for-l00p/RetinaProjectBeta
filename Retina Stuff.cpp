@@ -13,6 +13,7 @@
 #include "Rod.h"
 #include "Bipolar.h"
 #include "Ganglion.h"
+#include <SFML/Graphics.hpp>
 
 Photoreceptor* builder(int num) {
 	// Method creates seqeuncial Rods and Cones depending position in the matrix
@@ -45,6 +46,15 @@ int main()
 {
 	srand(std::time(0));
 	rand();
+
+	std::cout << "Enter name of image: ";
+	std::string s;
+	std::getline(std::cin, s);
+
+	sf::Texture image;
+	if (!image.loadFromFile(s + ".png")) {
+		std::cout << "\nOH SPONGEBOB, WHHYYYYYYY!!!\n\n";
+	}
 
 	const int rows = 12;
 	const int cols = 12;

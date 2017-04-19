@@ -21,7 +21,7 @@ void Photoreceptor::addPhotons(std::vector<Photon> newPhotons) {
 }
 
 void Photoreceptor::update(float elapsedSeconds) {
-	int photonsAbsorbed;
+	int photonsAbsorbed = 0;
 	for (int i = 0; i < photonQueue.size(); i++) {
 		if (Photoreceptor::isAbsored(photonQueue[i], receptorType)) {
 			photonsAbsorbed++;
