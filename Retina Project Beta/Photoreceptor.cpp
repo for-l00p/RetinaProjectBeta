@@ -8,7 +8,7 @@ Photoreceptor::Photoreceptor() : Neuron(-40, -65, true) {}
 double Photoreceptor::calculatePotential(int photonsHit, float elapsedSeconds) { return -40.0; }
 
 bool Photoreceptor::isAbsored(Photon p, Photoreceptor::ReceptorType t) {
-	return true; //TODO Implement probabilities (Stiles-Crawford, Spectral Sesnitivity, etc.)
+	return rand()%3<2; //TODO Implement probabilities (Stiles-Crawford, Spectral Sesnitivity, etc.)
 }
 
 void Photoreceptor::addPhotons(std::vector<Photon> newPhotons) {
