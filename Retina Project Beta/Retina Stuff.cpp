@@ -51,11 +51,15 @@ int main()
 	std::string s;
 	std::getline(std::cin, s);
 
-	sf::Texture image;
+	sf::Image image;
 	if (!image.loadFromFile(s + ".png")) {
 		std::cout << "\nOH SPONGEBOB, WHHYYYYYYY!!!\n\n";
 	}
 
+	else {
+		sf::Color c = image.getPixel(0, 0);
+		std::cout << "RGBA:" << std::hex << c.toInteger() << "\n\n";
+	}
 	const int rows = 12;
 	const int cols = 12;
 	const int bipolarRange = 3; // I've arbitrarily made the receptive fields a 3x3 square for the purposes of this test
@@ -93,9 +97,13 @@ int main()
 	}
 
 	//Low Light
+	std::vector<Photon> photons;
+	for (int i = 0; i < 25; ++i) {
+		photons.push_back(Photon());
+	}
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			//x[i][j]->addPhotons();
+			x[i][j]->addPhotons(photons);
 			x[i][j]->update(0);
 		}
 	}
@@ -140,10 +148,16 @@ int main()
 		std::cout << '\n';
 	}
 
+	//Heavy Light
+	photons.clear();
+	for (int i = 0; i < 200; ++i) {
+		photons.push_back(Photon());
+	}
+
 	std::cout << "\n\nHeavy Light:\n\n";
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			//x[i][j]->addPhotons();
+			x[i][j]->addPhotons(photons);
 			x[i][j]->update(0);
 		}
 	}

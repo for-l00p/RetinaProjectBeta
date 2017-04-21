@@ -16,8 +16,8 @@
 #include "Quadtree.cpp"
 
 const double PI = 3.1415926535;
-const double probabilityRED;
-const double probabilityGREEN;
+const double probabilityRED = 1;
+const double probabilityGREEN = 1;
 
 Quadtree<Neuron>* qt = new Quadtree<Neuron>();
 
@@ -65,11 +65,6 @@ Rod* buildRod() {
 
 }
 
-int main()
-{
-	
-}
-
 int previousImplementation() {
 	srand(std::time(0));
 	rand();
@@ -89,7 +84,7 @@ int previousImplementation() {
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			x[i][j] = builder(i + j);
+			//x[i][j] = builder(i + j);
 		}
 	}
 

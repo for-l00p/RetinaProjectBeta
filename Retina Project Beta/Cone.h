@@ -6,6 +6,9 @@
 #define CONE
 
 class Cone : public Photoreceptor {
+protected:
+	virtual double calculatePotential(int photons, float elapsedSeconds) override;
+
 public:
 	static constexpr double PEAK_DENSITY() { return 199.2f; }
 	static constexpr double PERIPHERY_DENSITY() { return 3.6f; }
@@ -13,7 +16,7 @@ public:
 
 	Cone(ReceptorType t);
 	virtual const char getRGB() override;
-	virtual void update(float elapsedSeconds) override;
+	virtual int update(float elapsedSeconds) override;
 	virtual const char getType() override;
 };
 

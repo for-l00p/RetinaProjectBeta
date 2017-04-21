@@ -10,10 +10,18 @@ const char Rod::getRGB() {
 	return ' ';
 }
 
+double Rod::calculatePotential(int photonsHit, float elapsedSeconds) {
+	double num = 1.0 / ((photonsHit / 25.0) + 1.0); //Arbitrary Numbers; needs real data
+	num = 1.0 - num;
+	return num*(cellMax - cellMin) + cellMin;
+}
+
 Rod::Rod() {
 	receptorType = Photoreceptor::ROD;
 }
 
- void Rod::update(float elapsedSeconds) {
-	 Photoreceptor::update(elapsedSeconds);
+ int Rod::update(float elapsedSeconds) {
+	 int photons = Photoreceptor::update(elapsedSeconds);
+	 cellPotential = calculatePotential(photons, elapsedSeconds);
+	 return cellPotential;
 }

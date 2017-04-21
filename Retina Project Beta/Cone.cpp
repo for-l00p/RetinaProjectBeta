@@ -16,8 +16,17 @@ Cone::Cone(ReceptorType t) {
 	return 'G';
 }
 
-void Cone::update(float elapsedSeconds) {
-	Photoreceptor::update(elapsedSeconds);
+double Cone::calculatePotential(int photonsHit, float elapsedSeconds) {
+	double num = 1.0 / ((photonsHit / 200.0) + 1.0); //Arbitrary Numbers; needs real data
+	num = 1.0 - num;
+	return num*(cellMax - cellMin) + cellMin;
+}
+
+int Cone::update(float elapsedSeconds) {
+	int photons = Photoreceptor::update(elapsedSeconds);
+	
+	cellPotential = calculatePotential(photons, elapsedSeconds);
+	return cellPotential;
 }
 
 const char Cone::getType() {
