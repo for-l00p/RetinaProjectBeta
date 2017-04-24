@@ -24,7 +24,10 @@ public:
 	void resetConnections();
 	std::vector<std::vector<double>> acquireInputs();
 	void update(float elapsedSeconds);
+	double getCellMin();
+	double getCellMax();
 	double getPotential();
+	double getPotentialRange();
 };
 
 #endif 

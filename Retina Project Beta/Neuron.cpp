@@ -68,6 +68,18 @@ void Neuron::update(float elapsedSeconds)
 	cellPotential = averageInput;
 }
 
+double Neuron::getCellMin() {
+	return cellMin;
+}
+
+double Neuron::getCellMax() {
+	return cellMax;
+}
+
 double Neuron::getPotential() {
 	return cellPotential;
+}
+
+double Neuron::getPotentialRange() {
+	return cellMax - cellMin;
 }
