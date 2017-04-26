@@ -41,6 +41,63 @@ Photoreceptor* builder(int num) {
 	}
 }
 
+struct BuilderData {
+	float centerX;
+	float centerY;
+	float fovealRadius;
+};
+
+Photoreceptor* builderImage(BuilderData bd, int y, int x) {
+	float r = std::sqrtf((x-bd.centerX)*(x-bd.centerX) + (y-bd.centerY)*(y-bd.centerY));
+
+	if (r <= bd.fovealRadius) {
+		if (rand() % 3 < 2)
+			return new Cone(Cone::RED);
+		return new Cone(Cone::GREEN);
+	}
+	if (r <= bd.fovealRadius * 2){
+		if (rand() % 2 < 1)
+			return new Rod();
+		int i = rand() % 10;
+		if (i < 1)
+			return new Cone(Cone::BLUE);
+		if (i < 4)
+			return new Cone(Cone::GREEN);
+		return new Cone(Cone::RED);
+	}
+
+	if (rand() % 4 < 3)
+		return new Rod();
+	int i = rand() % 10;
+	if (i < 1)
+		return new Cone(Cone::BLUE);
+	if (i < 4)
+		return new Cone(Cone::GREEN);
+	return new Cone(Cone::RED);
+	
+}
+
+Rod* builderImageTempRods(BuilderData bd, int y, int x) {
+	return new Rod();
+
+}
+
+Cone* builderImageTempCones(BuilderData bd, int y, int x) {
+	float r = std::sqrtf((x - bd.centerX)*(x - bd.centerX) + (y - bd.centerY)*(y - bd.centerY));
+
+	if (r <= bd.fovealRadius) {
+		if (rand() % 3 < 2)
+			return new Cone(Cone::RED);
+		return new Cone(Cone::GREEN);
+	}
+	int i = rand() % 10;
+	if (i < 1)
+		return new Cone(Cone::BLUE);
+	if (i < 4)
+		return new Cone(Cone::GREEN);
+	return new Cone(Cone::RED);
+}
+
 float getRedColorComponent(sf::Color c) {
 	int num = c.toInteger();
 	num = num >> 24 & 0xFF;
@@ -59,6 +116,50 @@ float getBlueColorComponent(sf::Color c) {
 	return ((float)num) / 255;
 }
 
+sf::Image displayImageBuilder(int rows, int cols, std::vector<std::vector<Photoreceptor*>> x) {
+	sf::Image displayImage;
+	displayImage.create(cols, rows, sf::Color::Black);
+	for (int i = 0; i < cols; i++) {
+		for (int j = 0; j < rows; j++) {
+			sf::Color c;
+			if (x[j][i]->getType() == 'R')
+				c = sf::Color(64, 64, 64);		
+			else {
+				if (x[j][i]->getRGB() == 'B')
+					c = sf::Color::Blue;
+				else if (x[j][i]->getRGB() == 'G')
+					c = sf::Color::Green;
+				else
+					c = sf::Color::Red;
+			}
+			displayImage.setPixel(i, j, c);
+		}
+	}
+	return displayImage;
+}
+
+
+void displaySpriteInWindow(sf::Image image) {
+	sf::Texture texture;
+	texture.loadFromImage(image);
+	sf::Sprite s;
+	s.setTexture(texture);
+	sf::RenderWindow window(sf::VideoMode(s.getGlobalBounds().width, s.getGlobalBounds().height), "Display");
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+		}
+
+		window.clear();
+		window.draw(s);
+		window.display();
+	}
+	return;
+}
 
 int main()
 {
@@ -79,7 +180,7 @@ int main()
 
 	else {
 		sf::Color c = image.getPixel(0, 0);
-		std::cout << "RGBA:" << std::hex << c.toInteger() << "\n\n";
+		std::cout << "RGBA:" << std::hex << c.toInteger() << std::dec << "\n\n";
 
 		rows = image.getSize().y;
 		cols = image.getSize().x;
@@ -95,33 +196,20 @@ int main()
 
 	std::vector<std::vector<Photoreceptor*>> x = {};// call a method which returns a list filled in with all the inputs;
 	std::vector<std::vector<Bipolar*>> y = {};
-	for (int i = 0; i < rows; ++i) {
-		std::vector<Photoreceptor*> currentRow;
-		for (int j = 0; j < cols; ++j) {
-			currentRow.push_back(builder(i + j));
-		}
-		x.push_back(currentRow);
-	}
 
 	if (!loaded) {
+		for (int i = 0; i < rows; ++i) {
+			std::vector<Photoreceptor*> currentRow;
+			for (int j = 0; j < cols; ++j) {
+				currentRow.push_back(builder(i + j));
+			}
+			x.push_back(currentRow);
+		}
+
+		sf::Thread t(&displaySpriteInWindow, displayImageBuilder(rows, cols, x));
+		t.launch();
+
 		//Low Light
-		std::cout << "Display of Rod and Cone Generator : \n\n";
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
-				std::cout << x[i][j]->getType();
-			}
-			std::cout << '\n';
-		}
-
-		std::cout << "\n\nDisplay the type of Cone that is created : \n\n";
-
-		for (int i = 0; i < rows; ++i) {
-			for (int j = 0; j < cols; ++j) {
-				std::cout << x[i][j]->getRGB();
-			}
-			std::cout << '\n';
-		}
-
 		std::vector<Photon> photons;
 		for (int i = 0; i < 25; ++i) {
 			photons.push_back(Photon());
@@ -216,11 +304,60 @@ int main()
 	}
 
 	else {
-		int photonsPerPixel = 25;
+		std::vector<std::vector<Rod*>> rods;		
+		std::vector<std::vector<Cone*>> cones;
+
+		std::cout << "Enter a foveal radius: \n>";
+		
+		BuilderData builderData;
+		builderData.centerX = cols / 2;
+		builderData.centerY = rows / 2;
+		
+		std::cin >> builderData.fovealRadius;
+
+		std::cout << "Display Generation? (0 for no, 1 or higher for yes)\n>";
+		int num;
+		std::cin >> num;
+
+		for (int i = 0; i < rows; ++i) {
+			std::vector<Photoreceptor*> currentRow;
+			for (int j = 0; j < cols; ++j) {
+				currentRow.push_back(builderImage(builderData,i,j));
+			}
+			x.push_back(currentRow);
+		}
+
+		for (int i = 0; i < rows; ++i) {
+			std::vector<Rod*> currentRow;
+			for (int j = 0; j < cols; ++j) {
+				currentRow.push_back(builderImageTempRods(builderData, i, j));
+			}
+			rods.push_back(currentRow);
+		}
+
+		for (int i = 0; i < rows; ++i) {
+			std::vector<Cone*> currentRow;
+			for (int j = 0; j < cols; ++j) {
+				currentRow.push_back(builderImageTempCones(builderData, i, j));
+			}
+			cones.push_back(currentRow);
+		}
+
+		if (num != 0) {	
+			sf::Thread t(&displaySpriteInWindow, displayImageBuilder(rows, cols, x));
+			t.launch();
+		}
+
+		std::cout << "Enter Photons per Pixel:\n>";
+		int photonsPerPixel;
+		std::cin >> photonsPerPixel;
 		std::vector<std::vector<Photon>> photons;
 		for (int i = 0; i < rows*cols; ++i) {
 			std::vector<Photon> currentRow = {};
-			sf::Color c = image.getPixel(i/rows,i%rows);
+			if (i >= rows*rows) {
+				int l = 0;
+			}
+			sf::Color c = image.getPixel(i%cols,i/cols);
 			int red = getRedColorComponent(c) * photonsPerPixel;
 			int green = getGreenColorComponent(c) * photonsPerPixel;
 			int blue = getBlueColorComponent(c) * photonsPerPixel;
@@ -234,12 +371,22 @@ int main()
 				currentRow.push_back(Photon(470, 0));
 			}
 			photons.push_back(currentRow);
+			if(i%rows == 0)
+				std::cout << "Photon Generation " << i * 100 / (rows*cols) << "% Complete\n";
 		}
+
+		std::cout << "\nPhoton Generation Complete\n";
+
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {
-				x[i][j]->addPhotons(photons[i*j]);
+				x[i][j]->addPhotons(photons[i*cols+j]);
+				rods[i][j]->addPhotons(photons[i*cols + j]);
+				cones[i][j]->addPhotons(photons[i*cols + j]);
 				x[i][j]->update(0);
+				rods[i][j]->update(0);
+				cones[i][j]->update(0);
 			}
+			std::cout << "Photoreceptor Loading " << i * 100 / rows << "% Complete\n";
 		}
 
 		std::cout << "\nPhotoreceptor Loading Complete\n";
@@ -274,18 +421,78 @@ int main()
 			potentials.push_back(currentRow);
 		}
 
+		std::vector<std::vector<double>> rodPotentials;
+		for (int i = 0; i < rows; i++) {
+			std::vector<double> currentRow;
+			for (int j = 0; j < cols; j++) {
+				double percent = (rods[i][j]->getPotential() - rods[i][j]->getCellMin()) / rods[i][j]->getPotentialRange();
+				if (percent < 0) { percent *= -1; }
+				currentRow.push_back(percent);
+			}
+			rodPotentials.push_back(currentRow);
+		}
+
+		std::vector<std::vector<double>> conePotentials;
+		for (int i = 0; i < rows; i++) {
+			std::vector<double> currentRow;
+			for (int j = 0; j < cols; j++) {
+				double percent = (cones[i][j]->getPotential() - cones[i][j]->getCellMin()) / cones[i][j]->getPotentialRange();
+				if (percent < 0) { percent *= -1; }
+				currentRow.push_back(percent);
+			}
+			conePotentials.push_back(currentRow);
+		}
+
 		std::cout << "Potential Percentages Complete\n";
 
 		sf::Image outputImage;
-		outputImage.create(rows/bipolarRange,cols/bipolarRange, sf::Color::Black);
+		outputImage.create(cols/bipolarRange,rows/bipolarRange, sf::Color::Black);
 		sf::Color pixelColor;
 
 		for (int i = 0; i < rows / bipolarRange; ++i) {
 			for (int j = 0; j < cols / bipolarRange; ++j) {
 				pixelColor = sf::Color(potentials[i][j]*255,potentials[i][j]*255,potentials[i][j]*255);
-				outputImage.setPixel(i, j, pixelColor);
+				outputImage.setPixel(j, i, pixelColor);
 			}
 		}
+
+		std::cout << "Pixel Generation Complete\n";
+
+		sf::Image outputImageRods;
+		outputImageRods.create(cols, rows, sf::Color::Black);
+
+		std::cout << "Rod Array Size: " << rodPotentials[0].size() << ", " << rodPotentials.size() << std::endl;
+
+		for (int i = 0; i < rows; ++i) {
+			for (int j = 0; j < cols; ++j) {
+				pixelColor = sf::Color(rodPotentials[i][j] * 255, rodPotentials[i][j] * 255, rodPotentials[i][j] * 255);
+				outputImageRods.setPixel(j, i, pixelColor);
+			}
+		}
+
+		std::cout << "Rod Pixel Generation Complete\n";
+
+		sf::Image outputImageCones;
+		outputImageCones.create(cols, rows, sf::Color::Black);
+
+		for (int i = 0; i < rows; ++i) {
+			for (int j = 0; j < cols; ++j) {
+				switch (cones[i][j]->getRGB()) {
+				case 'R':
+					pixelColor = sf::Color(conePotentials[i][j] * 255,0,0);
+					break;
+				case 'G':
+					pixelColor = sf::Color(0, conePotentials[i][j] * 255, 0);
+					break;
+				case 'B':
+					pixelColor = sf::Color(0, 0, conePotentials[i][j] * 255);
+					break;
+				}
+				outputImageCones.setPixel(j, i, pixelColor);
+			}
+		}
+
+		std::cout << "Cone Pixel Generation Complete\n";
 
 		sf::Texture outputTexture;
 		outputTexture.loadFromImage(outputImage);
@@ -293,9 +500,23 @@ int main()
 		outputSprite.setTexture(outputTexture);
 		outputSprite.setScale(12.0f,12.0f);
 
-		sf::RenderWindow window(sf::VideoMode(rows/bipolarRange*outputSprite.getScale().x+32, cols / bipolarRange*outputSprite.getScale().y + 32), "SFML works!");
+		sf::Texture rodsOutputTexture;
+		rodsOutputTexture.loadFromImage(outputImageRods);
+		sf::Sprite rodsOutputSprite;
+		rodsOutputSprite.setTexture(rodsOutputTexture);
+		rodsOutputSprite.setScale(4.0f, 4.0f);
 
-		while (window.isOpen())
+		sf::Texture conesOutputTexture;
+		conesOutputTexture.loadFromImage(outputImageCones);
+		sf::Sprite conesOutputSprite;
+		conesOutputSprite.setTexture(conesOutputTexture);
+		conesOutputSprite.setScale(4.0f, 4.0f);
+
+		sf::RenderWindow window(sf::VideoMode(outputSprite.getGlobalBounds().width, outputSprite.getGlobalBounds().height), "Overall");
+		sf::RenderWindow window2(sf::VideoMode(rodsOutputSprite.getGlobalBounds().width, outputSprite.getGlobalBounds().height), "Rods");
+		sf::RenderWindow window3(sf::VideoMode(conesOutputSprite.getGlobalBounds().width, outputSprite.getGlobalBounds().height), "Cones");
+
+		while (window.isOpen() || window2.isOpen() || window3.isOpen())
 		{
 			sf::Event event;
 			while (window.pollEvent(event))
@@ -303,10 +524,28 @@ int main()
 				if (event.type == sf::Event::Closed)
 					window.close();
 			}
+			while (window2.pollEvent(event))
+			{
+				if (event.type == sf::Event::Closed)
+					window2.close();
+			}
+			while (window3.pollEvent(event))
+			{
+				if (event.type == sf::Event::Closed)
+					window3.close();
+			}
 
 			window.clear();
 			window.draw(outputSprite);
 			window.display();
+
+			window2.clear();
+			window2.draw(rodsOutputSprite);
+			window2.display();
+
+			window3.clear();
+			window3.draw(conesOutputSprite);
+			window3.display();
 		}
 
 	}
