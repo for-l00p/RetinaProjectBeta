@@ -14,18 +14,19 @@
 #include "Bipolar.h"
 #include "Ganglion.h"
 #include "Quadtree.cpp"
+#include "Quadtree.h"
 
 const double PI = 3.1415926535;
-const double probabilityRED;
-const double probabilityGREEN;
+const double probabilityRED=0.64;
+const double probabilityGREEN=0.32;
+//probabilityBlue= 0.02;
 
-Quadtree<Neuron>* qt = new Quadtree<Neuron>();
+Quadtree<Photoreceptor> retina;
 
 Cone* buildCone() {
 	// Method creates rods and cones based on polar coordinates 
 	//TO DO: Implement density based on data in cone & rod topography (.txt) files
 	
-
 	srand((unsigned int)time(NULL));
 
 	double r = ((double)rand() / (RAND_MAX)) * 180;
@@ -38,20 +39,18 @@ Cone* buildCone() {
 	
 	double coneType = ((double)rand() / (RAND_MAX));
 	if (coneType < probabilityRED)
-		c = new Cone(Cone::RED);
+		c = new Cone(Cone::RED, x, y);
 	else if (coneType < probabilityRED + probabilityGREEN)
-		c = new Cone(Cone::GREEN);
+		c = new Cone(Cone::GREEN,x,y);
 	else 
-		c = new Cone(Cone::BLUE);
+		c = new Cone(Cone::BLUE,x,y);
 	return c;
-
 }
 
 Rod* buildRod() {
 	// Method creates rods and cones based on polar coordinates 
 	//TO DO: Implement density based on data in cone & rod topography (.txt) files
-
-
+	
 	srand((unsigned int)time(NULL));
 
 	double r = ((double)rand() / (RAND_MAX)) * 180;
@@ -60,16 +59,15 @@ Rod* buildRod() {
 	double x = r*cos(theta);
 	double y = r*sin(theta);
 
-	Rod* c = new Rod();
+	Rod* c = new Rod(x,y);
 	return c;
-
 }
 
 int main()
 {
 	
 }
-
+/*
 int previousImplementation() {
 	srand(std::time(0));
 	rand();
@@ -77,13 +75,11 @@ int previousImplementation() {
 	const int rows = 12;
 	const int cols = 12;
 	const int bipolarRange = 3; // I've arbitrarily made the receptive fields a 3x3 square for the purposes of this test
-
-
+	
 								//std::vector<Photoreceptor> receptors; // will be implemented in the future
 								//std::vector<Bipolar> bipolars; 
 								//std::vector<Ganglion> ganglia;
-
-
+								
 	Photoreceptor* x[rows][cols] = {};// call a method which returns a list filled in with all the inputs;
 	Bipolar* y[rows / bipolarRange][cols / bipolarRange] = {};
 
@@ -92,24 +88,12 @@ int previousImplementation() {
 			x[i][j] = builder(i + j);
 		}
 	}
-
-	std::cout << "Display of Rod and Cone Generator : \n\n";
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			std::cout << x[i][j]->getType();
-		}
-		std::cout << '\n';
-	}
-
-	std::cout << "\n\nDisplay the type of Cone that is created : \n\n";
-
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
 			std::cout << x[i][j]->getRGB();
 		}
 		std::cout << '\n';
 	}
-
 	//Low Light
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
@@ -117,7 +101,6 @@ int previousImplementation() {
 			x[i][j]->update(0);
 		}
 	}
-
 	for (int i = 0; i < rows / bipolarRange; i++) {
 		for (int j = 0; j < cols / bipolarRange; j++) {
 			y[i][j] = new Bipolar();
@@ -131,68 +114,5 @@ int previousImplementation() {
 			}
 		}
 	}
-
-	std::cout << "\n\nLow Light:\n\n";
-	std::cout << "\nRod Potentials: \n\n";
-	for (int i = 0; i < rows; ++i) {
-		for (int j = i % 2; j < cols; j += 2) {
-			std::cout << "[" << x[i][j]->getPotential() << "] ";
-		}
-		std::cout << '\n';
-	}
-
-	std::cout << "\nCone Potentials: \n\n";
-	for (int i = 0; i < rows; ++i) {
-		for (int j = (i + 1) % 2; j < cols; j += 2) {
-			std::cout << "[" << x[i][j]->getPotential() << "] ";
-		}
-		std::cout << '\n';
-	}
-
-	std::cout << "\nBipolar Potentials: \n\n";
-	for (int i = 0; i < rows / bipolarRange; i++) {
-		for (int j = 0; j < cols / bipolarRange; j++) {
-			y[i][j]->update(0);
-			std::cout << "[" << y[i][j]->getPotential() << "] ";
-		}
-		std::cout << '\n';
-	}
-
-	std::cout << "\n\nHeavy Light:\n\n";
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
-			//x[i][j]->addPhotons();
-			x[i][j]->update(0);
-		}
-	}
-
-	std::cout << "\nRod Potentials: \n\n";
-	for (int i = 0; i < rows; ++i) {
-		for (int j = i % 2; j < cols; j += 2) {
-			std::cout << "[" << x[i][j]->getPotential() << "] ";
-		}
-		std::cout << '\n';
-	}
-
-	std::cout << "\nCone Potentials: \n\n";
-	for (int i = 0; i < rows; ++i) {
-		for (int j = (i + 1) % 2; j < cols; j += 2) {
-			std::cout << "[" << x[i][j]->getPotential() << "] ";
-		}
-		std::cout << '\n';
-	}
-
-	std::cout << "\nBipolar Potentials: \n\n";
-	for (int i = 0; i < rows / bipolarRange; i++) {
-		for (int j = 0; j < cols / bipolarRange; j++) {
-			y[i][j]->update(0);
-			std::cout << "[" << y[i][j]->getPotential() << "] ";
-		}
-		std::cout << '\n';
-	}
-
-	int xy;
-	std::cin >> xy;
-
 	return 0;
-}
+} */

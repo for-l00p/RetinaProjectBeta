@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "Cone.h"
-#include "Photon.h"
 
-Cone::Cone(ReceptorType t) {
+
+Cone::Cone(ReceptorType t, int x, int y) {
 	receptorType = t; // stores RGB value which is unique to the cone
+	Point position = Point(x, y);
 }
 
  const char Cone::getRGB() {
@@ -15,6 +16,14 @@ Cone::Cone(ReceptorType t) {
 	}
 	return 'G';
 }
+
+ const float Cone::getX() {
+	 return position.x;
+ }
+
+ const float Cone::getY() {
+	 return position.y;
+ }
 
 void Cone::update(float elapsedSeconds) {
 	Photoreceptor::update(elapsedSeconds);

@@ -4,86 +4,11 @@
 #include <vector>
 #include <cmath>
 #include <ctime>
+#include "Quadtree.h"
 
 //NOTE: This quadtree is based on a quadtree implementation from https://codereview.stackexchange.com/questions/84374/quadtree-implementation with several modifications.
 
-struct Point
-{
-	float x = 0.0f;
-	float y = 0.0f;
-};
-
-struct AABB
-{
-	Point centre;
-	Point halfSize;
-
-	AABB(Point centre = Point(), Point halfSize = Point()) : centre(centre), halfSize(halfSize) {};
-
-	bool contains(Point a) const
-	{
-		if (a.x < centre.x + halfSize.x && a.x > centre.x - halfSize.x)
-		{
-			if (a.y < centre.y + halfSize.y && a.y > centre.y - halfSize.y)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool intersects(const AABB& other) const
-	{
-		//this right > that left                                          this left <s that right
-		if (centre.x + halfSize.x > other.centre.x - other.halfSize.x || centre.x - halfSize.x < other.centre.x + other.halfSize.x)
-		{
-			// This bottom > that top
-			if (centre.y + halfSize.y > other.centre.y - other.halfSize.y || centre.y - halfSize.y < other.centre.y + other.halfSize.y)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-};
-
 template <typename T>
-struct Data
-{
-	Point pos;
-	T* load;
-
-	Data(Point pos = {}, T* data = nullptrptr) : pos(pos), load(data) {};
-};
-
-
-template <class T>
-class Quadtree
-{
-private:
-	//4 children
-	Quadtree* nw;
-	Quadtree* ne;
-	Quadtree* sw;
-	Quadtree* se;
-
-	AABB boundary;
-
-	std::vector< Data<T> > objects;
-
-	static constexpr int CAPACITY = 4;
-public:
-	Quadtree<T>();
-	Quadtree<T>(AABB boundary);
-
-	~Quadtree();
-
-	bool insert(Data<T> d);
-	void subdivide();
-	std::vector< Data<T> > queryRange(AABB range);
-};
-
-template <class T>
 Quadtree<T>::Quadtree()
 {
 	nw = nullptr;
@@ -94,7 +19,7 @@ Quadtree<T>::Quadtree()
 	objects = std::vector< Data<T> >();
 }
 
-template <class T>
+template <typename T>
 Quadtree<T>::Quadtree(AABB boundary)
 {
 	objects = std::vector< Data<T> >();
@@ -105,7 +30,7 @@ Quadtree<T>::Quadtree(AABB boundary)
 	this->boundary = boundary;
 }
 
-template <class T>
+template <typename T>
 Quadtree<T>::~Quadtree()
 {
 	delete nw;
@@ -114,7 +39,7 @@ Quadtree<T>::~Quadtree()
 	delete se;
 }
 
-template <class T>
+template <typename T>
 void Quadtree<T>::subdivide()
 {
 	Point qSize = boundary.halfSize;
@@ -131,7 +56,7 @@ void Quadtree<T>::subdivide()
 	se = new Quadtree(AABB(qCentre, qSize));
 }
 
-template <class T>
+template <typename T>
 bool Quadtree<T>::insert(Data<T> d)
 {
 	if (!boundary.contains(d.pos))
@@ -170,7 +95,7 @@ bool Quadtree<T>::insert(Data<T> d)
 	return false;
 }
 
-template <class T>
+template <typename T>
 std::vector< Data<T> > Quadtree<T>::queryRange(AABB range)
 {
 	std::vector< Data<T> > pInRange = std::vector< Data<T> >();

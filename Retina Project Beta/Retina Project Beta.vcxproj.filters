@@ -74,9 +74,6 @@
     <ClCompile Include="Photoreceptor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Retina Stuff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Rod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
