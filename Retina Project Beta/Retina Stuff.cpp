@@ -548,6 +548,10 @@ int main()
 			window3.display();
 		}
 
+		outputImage.saveToFile("OutputOverall.png");
+		outputImageRods.saveToFile("OutputOverallRods.png");
+		outputImageCones.saveToFile("OutputOverallCones.png");
+
 	}
 
 	return 0;
