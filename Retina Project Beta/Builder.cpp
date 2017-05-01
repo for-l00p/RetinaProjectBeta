@@ -29,7 +29,7 @@ Cone* buildCone() {
 	
 	srand((unsigned int)time(NULL));
 
-	double r = ((double)rand() / (RAND_MAX)) * 180;
+	double r = getDistance(true);
 	double theta = ((double)rand() / (RAND_MAX)) * 2 * PI;
 
 	double x = r*cos(theta);
@@ -47,13 +47,17 @@ Cone* buildCone() {
 	return c;
 }
 
+double getDistance(bool isCone) {
+	return ((double)rand() / (RAND_MAX)) * 180;
+}
+
 Rod* buildRod() {
 	// Method creates rods and cones based on polar coordinates 
 	//TO DO: Implement density based on data in cone & rod topography (.txt) files
 	
 	srand((unsigned int)time(NULL));
 
-	double r = ((double)rand() / (RAND_MAX)) * 180;
+	double r = getDistance(false);
 	double theta = ((double)rand() / (RAND_MAX)) * 2 * PI;
 
 	double x = r*cos(theta);
