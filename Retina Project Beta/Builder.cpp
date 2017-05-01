@@ -43,6 +43,8 @@ coneDistribution(coneIntervals.begin(), coneIntervals.end(), coneDensity.begin()
 std::piecewise_linear_distribution<double>
 rodDistribution(rodIntervals.begin(), rodIntervals.end(), rodDensity.begin());
 
+std::default_random_engine generator;
+
 Cone* buildCone() {
 	// Method creates rods and cones based on polar coordinates 
 	//TO DO: Implement density based on data in cone & rod topography (.txt) files
@@ -67,11 +69,14 @@ Cone* buildCone() {
 	return c;
 }
 
+double getInterval(bool isCone) {
+	if(true)
+		return coneDistribution(generator);
+	return rodDistribution(generator);
+}
+
 double getDistance(bool isCone) {
-
-
-
-	return ((double)rand() / (RAND_MAX)) * 180;
+	//takes in an interval and uniformly generates a distance in that interval
 }
 
 Rod* buildRod() {
