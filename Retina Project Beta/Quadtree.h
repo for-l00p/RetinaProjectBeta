@@ -1,7 +1,13 @@
 #pragma once
 #include "stdafx.h"
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <ctime>
+#include "Photoreceptor.h"
 #ifndef QUADTREE
 #define QUADTREE
+
 struct Point
 {
 	int x;
@@ -12,7 +18,7 @@ struct Point
 struct AABB
 {
 	Point centre;
-Point halfSize;
+	Point halfSize;
 
 AABB(Point centre = Point(), Point halfSize = Point()) : centre(centre), halfSize(halfSize) {};
 
@@ -48,16 +54,24 @@ template <typename T>
 struct Data
 {
 	Point pos;
+	Photoreceptor neuron;
 	T* load;
 
-	Data(Point pos = {}, T* data = nullptrptr) : pos(pos), load(data) {};
+
+	Data(Photoreceptor cell) {
+		neuron = cell;
+		pos = Point(cell.xc, cell.yc);
+	} 
+/*	T setPoint() {
+		pos = Point(cell.xc, cell.yc);
+	}*/
 };
 
 
 template <typename T>
 class Quadtree
 {
-private:
+protected:
 	//4 children
 	Quadtree* nw;
 	Quadtree* ne;
@@ -65,7 +79,7 @@ private:
 	Quadtree* se;
 
 	AABB boundary;
-
+	std::string position;
 	std::vector< Data<T> > objects;
 
 	static constexpr int CAPACITY = 4;
@@ -78,6 +92,7 @@ public:
 	bool insert(Data<T> d);
 	void subdivide();
 	std::vector< Data<T> > queryRange(AABB range);
+	void getTree();
 };
 
 #endif

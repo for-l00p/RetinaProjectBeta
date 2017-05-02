@@ -1,4 +1,4 @@
-
+#pragma once
 #include "stdafx.h"
 #include "Photoreceptor.h"
 
@@ -11,7 +11,7 @@ public:
 	static constexpr double PERIPHERY_DENSITY() { return 3.6f; }
 	static constexpr double MEAN_DENSITY_CONSTANT() { return 15; } //Ignore these for now
 
-	Cone(ReceptorType t);
+	//Cone(ReceptorType t);
 
 	Cone(ReceptorType t, int x, int y);
 	virtual const char getRGB() override;

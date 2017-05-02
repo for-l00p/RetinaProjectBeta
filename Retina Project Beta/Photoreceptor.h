@@ -3,7 +3,6 @@
 #include "Neuron.h"
 #include "Photon.h"
 #include <vector>
-#include "Quadtree.h"
 
 #ifndef PHOTORECEPTOR
 #define PHOTORECEPTOR
@@ -21,9 +20,10 @@ protected:
 	//double locationAngle; //Relative to straight up
 	std::vector<Photon> photonQueue;
 	ReceptorType receptorType;
-	Point position = Point();
 
 public:
+	int xc;
+	int yc;
 	virtual const char getType() override; // returns the type 
 	virtual const char getRGB(); // creates a virtual method which is overriden by rods and cones
 	static bool isAbsored(Photon p, ReceptorType t);

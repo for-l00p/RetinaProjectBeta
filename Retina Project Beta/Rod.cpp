@@ -1,3 +1,4 @@
+#pragma once
 #include "stdafx.h"
 #include "Rod.h"
 
@@ -10,20 +11,17 @@ const char Rod::getRGB() {
 	return ' ';
 }
 
-Rod::Rod() {
-	receptorType = Photoreceptor::ROD;
-}
-
 Rod::Rod(int x, int y) {
 	receptorType = Photoreceptor::ROD;
-	Point position = Point(x, y);
+	xc = x;
+	yc = y;
 }
 const float Rod::getX() {
-	return position.x;
+	return xc;
 }
 
 const float Rod::getY() {
-	return position.y;
+	return yc;
 }
 
  void Rod::update(float elapsedSeconds) {

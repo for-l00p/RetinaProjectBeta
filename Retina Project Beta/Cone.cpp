@@ -1,10 +1,12 @@
+#pragma once
 #include "stdafx.h"
 #include "Cone.h"
 
 
 Cone::Cone(ReceptorType t, int x, int y) {
 	receptorType = t; // stores RGB value which is unique to the cone
-	Point position = Point(x, y);
+	xc = x;
+	yc = y;
 }
 
  const char Cone::getRGB() {
@@ -18,11 +20,11 @@ Cone::Cone(ReceptorType t, int x, int y) {
 }
 
  const float Cone::getX() {
-	 return position.x;
+	 return xc;
  }
 
  const float Cone::getY() {
-	 return position.y;
+	 return yc;
  }
 
 void Cone::update(float elapsedSeconds) {

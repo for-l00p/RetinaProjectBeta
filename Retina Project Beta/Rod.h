@@ -6,7 +6,7 @@
 
 class Rod : public Photoreceptor {
 public:
-	Rod();
+	//Rod();
 	virtual const char getType() override;
 	virtual const char getRGB() override;
 	Rod(int x, int y);

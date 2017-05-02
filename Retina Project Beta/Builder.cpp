@@ -1,6 +1,6 @@
 // Demo.cpp : Defines the entry point for the console application.
 //
-
+#pragma once
 #include "stdafx.h"
 #include <iostream>
 #include <string>
@@ -11,12 +11,10 @@
 #include <ctime>
 #include <iterator>
 #include "Neuron.h"
-#include "Photoreceptor.h"
 #include "Cone.h"
 #include "Rod.h"
 #include "Bipolar.h"
 #include "Ganglion.h"
-#include "Quadtree.cpp"
 #include "Quadtree.h"
 
 const double PI = 3.1415926535;
@@ -24,7 +22,7 @@ const double probabilityRED=0.64;
 const double probabilityGREEN=0.32;
 //probabilityBlue= 0.02;
 
-Quadtree<Photoreceptor> retina;
+Quadtree<Photoreceptor> retina = Quadtree<Photoreceptor>();
 
 const int numCone = 10000;//number of cones to be generated
 const int numRds = 10000;//number of rods to be generated
@@ -45,6 +43,16 @@ rodDistribution(rodIntervals.begin(), rodIntervals.end(), rodDensity.begin());
 
 std::default_random_engine generator;
 
+double getInterval(bool isCone) {
+	if (true)
+		return coneDistribution(generator);
+	return rodDistribution(generator);
+}
+
+double getDistance(bool isCone) {
+	//takes in an interval and uniformly generates a distance in that interval
+	return 2.5;
+}
 Cone* buildCone() {
 	// Method creates rods and cones based on polar coordinates 
 	//TO DO: Implement density based on data in cone & rod topography (.txt) files
@@ -69,15 +77,6 @@ Cone* buildCone() {
 	return c;
 }
 
-double getInterval(bool isCone) {
-	if(true)
-		return coneDistribution(generator);
-	return rodDistribution(generator);
-}
-
-double getDistance(bool isCone) {
-	//takes in an interval and uniformly generates a distance in that interval
-}
 
 Rod* buildRod() {
 	// Method creates rods and cones based on polar coordinates 
@@ -94,8 +93,64 @@ Rod* buildRod() {
 	Rod* c = new Rod(x,y);
 	return c;
 }
+ 
+Photoreceptor* build(int x, int y) {
+	float r = std::sqrtf((x - 5)*(x - 5) + (y - 5)*(y - 5));
+	if (r <= 3) {
+		if (rand() % 3 < 2) {
+			//std::cout << "hi1";
+			return new Cone(Cone::RED, x, y);
+		}
+		//std::cout << "hi2";
+		return new Cone(Cone::GREEN, x, y);
+	}
+	if (r <= 3 * 2) {
+		if (rand() % 2 < 1) {
+			//std::cout << "hi3";
+			return new Rod(x, y);
+		}
+		int i = rand() % 10;
+		if (i < 1) {
+			//std::cout << "hi4";
+			return new Cone(Cone::BLUE, x, y);
+		}
+		if (i < 4) {
+		//	std::cout << "hi5";
+			return new Cone(Cone::GREEN, x, y);
+		}
+		//std::cout << "hi6";
+		return new Cone(Cone::RED, x, y);
+	}
+	//std::cout << "hi";
+	if (rand() % 4 < 3)
+		return new Rod(x, y);
+	int i = rand() % 10;
+	if (i < 1)
+		return new Cone(Cone::BLUE, x, y);
+	if (i < 4)
+		return new Cone(Cone::GREEN, x, y);
+	return new Cone(Cone::RED, x, y);
+}
 
 int main()
 {
-		
+	std::vector<std::vector<Photoreceptor*>> x = {};
+	for (int i = 0; i < 10; i++) {
+		std::vector<Photoreceptor*> currentRow;
+		for (int j = 0; j < 10; j++) {
+			auto* cell = build(i, j);
+			std::cout << cell->xc << " ";
+		//	Photoreceptor* current = build(i, j);
+			currentRow.push_back(cell);
+			Data<Photoreceptor> cur((Photoreceptor)*cell);
+			//cur.cell = *current;
+			//cur.setPoint();
+			retina.insert(cur);
+		}
+		x.push_back(currentRow);
+	}
+	retina.getTree(); 
+	int j;
+	std::cin >> j;
+
 }
