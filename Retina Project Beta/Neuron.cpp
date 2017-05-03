@@ -41,20 +41,20 @@ void Neuron::resetConnections() {
 
 std::vector<std::vector<double>> Neuron::acquireInputs() {
 	std::vector<double> centerPotentials = std::vector<double>{};
+	centerPotentials.resize(inputCenterConnectedCells.size());
 	for (int i = 0; i < inputCenterConnectedCells.size(); ++i) {
-		centerPotentials.resize(i + 1);
 		centerPotentials[i] = inputCenterConnectedCells[i]->getPotential();
 	}
 	std::vector<double> surroundPotentials = std::vector<double>{};
+	surroundPotentials.resize(inputSurroundConnectedCells.size());
 	for (int i = 0; i < inputSurroundConnectedCells.size(); ++i) {
-		centerPotentials.resize(i + 1);
-		centerPotentials[i] = inputSurroundConnectedCells[i]->getPotential();
+		surroundPotentials[i] = inputSurroundConnectedCells[i]->getPotential();
 	}
 
 	return std::vector<std::vector<double>> {centerPotentials, surroundPotentials};
 }
 
-void Neuron::update(float elapsedSeconds)
+int Neuron::update(float elapsedSeconds)
 {
 	double averageInput = 0;
 	std::vector<std::vector<double>> inputs = acquireInputs();
@@ -66,6 +66,7 @@ void Neuron::update(float elapsedSeconds)
 	averageInput /= inputs[0].size() + inputs[1].size();
 
 	cellPotential = averageInput;
+	return (int)cellPotential;
 }
 
 double Neuron::getCellMin() {

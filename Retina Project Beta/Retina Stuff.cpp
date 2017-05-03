@@ -138,7 +138,6 @@ sf::Image displayImageBuilder(int rows, int cols, std::vector<std::vector<Photor
 	return displayImage;
 }
 
-
 void displaySpriteInWindow(sf::Image image) {
 	sf::Texture texture;
 	texture.loadFromImage(image);
@@ -167,14 +166,14 @@ int main()
 	rand();
 
 	std::cout << "Enter name of image: ";
-	std::string s;
-	std::getline(std::cin, s);
+	std::string imageName;
+	std::getline(std::cin, imageName);
 
 	int rows = 12;
 	int cols = 12;
 	bool loaded = false;
 	sf::Image image;
-	if (!image.loadFromFile(s + ".png")) {
+	if (!image.loadFromFile(imageName + ".png")) {
 		std::cout << "\nOH SPONGEBOB, WHHYYYYYYY!!!\n\n";
 	}
 
@@ -307,6 +306,8 @@ int main()
 		std::vector<std::vector<Rod*>> rods;		
 		std::vector<std::vector<Cone*>> cones;
 
+		//image.flipVertically();
+
 		std::cout << "Enter a foveal radius: \n>";
 		
 		BuilderData builderData;
@@ -322,7 +323,7 @@ int main()
 		for (int i = 0; i < rows; ++i) {
 			std::vector<Photoreceptor*> currentRow;
 			for (int j = 0; j < cols; ++j) {
-				currentRow.push_back(builderImage(builderData,i,j));
+				currentRow.push_back(builderImageTempRods(builderData,i,j));
 			}
 			x.push_back(currentRow);
 		}
@@ -354,9 +355,6 @@ int main()
 		std::vector<std::vector<Photon>> photons;
 		for (int i = 0; i < rows*cols; ++i) {
 			std::vector<Photon> currentRow = {};
-			if (i >= rows*rows) {
-				int l = 0;
-			}
 			sf::Color c = image.getPixel(i%cols,i/cols);
 			int red = getRedColorComponent(c) * photonsPerPixel;
 			int green = getGreenColorComponent(c) * photonsPerPixel;
@@ -379,10 +377,10 @@ int main()
 
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {
-				x[i][j]->addPhotons(photons[i*cols+j]);
+				x[i][j]->addPhotons(photons[i*cols + j]);
+				x[i][j]->update(0);
 				rods[i][j]->addPhotons(photons[i*cols + j]);
 				cones[i][j]->addPhotons(photons[i*cols + j]);
-				x[i][j]->update(0);
 				rods[i][j]->update(0);
 				cones[i][j]->update(0);
 			}
@@ -391,34 +389,40 @@ int main()
 
 		std::cout << "\nPhotoreceptor Loading Complete\n";
 
-		for (int i = 0; i < rows / bipolarRange; i++) {
+		for (int i = 0; i < rows; i++) {
 			std::vector<Bipolar*> currentRow;
-			for (int j = 0; j < cols / bipolarRange; j++) {
+			for (int j = 0; j < cols; j++) {
 				currentRow.push_back(new Bipolar());
 				for (int k = -(bipolarRange / 2); k < (bipolarRange / 2) + 1; k++) {
 					for (int m = -(bipolarRange / 2); m < (int)(bipolarRange / 2) + 1; m++) {
-						if (m != 0 || k != 0)
-							currentRow[j]->addInputCellSurround(x[i*bipolarRange + (bipolarRange / 2) - k][j*bipolarRange + (bipolarRange / 2) - m]);
-						else
-							currentRow[j]->addInputCellCenter(x[i*bipolarRange + (bipolarRange / 2) - k][j*bipolarRange + (bipolarRange / 2) - m]);
+						if (i + k >= 0 && i + k < rows && j + m >= 0 && j + m < cols) {
+							if (m != 0 || k != 0)
+								currentRow[j]->addInputCellSurround(x[i + k][j + m]);
+							else
+								currentRow[j]->addInputCellCenter(x[i + k][j + m]);
+						}
 					}
 				}
 			}
 			y.push_back(currentRow);
+			std::cout << "Bipolar Loading " << i * 100 / rows << "% Complete\n";
 		}
 
 		std::cout << "Bipolar Loading Complete\n";
 
 		std::vector<std::vector<double>> potentials;
-		for (int i = 0; i < rows / bipolarRange; i++) {
+		for (int i = 0; i < rows; i++) {
 			std::vector<double> currentRow;
-			for (int j = 0; j < cols / bipolarRange; j++) {
+			for (int j = 0; j < cols; j++) {
 				y[i][j]->update(0);
 				double percent = (y[i][j]->getPotential() - y[i][j]->getCellMin()) / y[i][j]->getPotentialRange();
+				if (percent != 0)
+					int l = 0;
 				if (percent < 0) { percent *= -1; }
 				currentRow.push_back(percent);
 			}
 			potentials.push_back(currentRow);
+			std::cout << "Potential Percentages Loading " << i * 33 / rows << "% Complete\n";
 		}
 
 		std::vector<std::vector<double>> rodPotentials;
@@ -430,6 +434,7 @@ int main()
 				currentRow.push_back(percent);
 			}
 			rodPotentials.push_back(currentRow);
+			std::cout << "Potential Percentages Loading " << (i * 33 / rows + 33) << "% Complete\n";
 		}
 
 		std::vector<std::vector<double>> conePotentials;
@@ -441,16 +446,17 @@ int main()
 				currentRow.push_back(percent);
 			}
 			conePotentials.push_back(currentRow);
+			std::cout << "Potential Percentages Loading " << (i * 33 / rows + 67) << "% Complete\n";
 		}
 
 		std::cout << "Potential Percentages Complete\n";
 
 		sf::Image outputImage;
-		outputImage.create(cols/bipolarRange,rows/bipolarRange, sf::Color::Black);
+		outputImage.create(cols,rows, sf::Color::Black);
 		sf::Color pixelColor;
 
-		for (int i = 0; i < rows / bipolarRange; ++i) {
-			for (int j = 0; j < cols / bipolarRange; ++j) {
+		for (int i = 0; i < rows; ++i) {
+			for (int j = 0; j < cols; ++j) {
 				pixelColor = sf::Color(potentials[i][j]*255,potentials[i][j]*255,potentials[i][j]*255);
 				outputImage.setPixel(j, i, pixelColor);
 			}
@@ -460,8 +466,6 @@ int main()
 
 		sf::Image outputImageRods;
 		outputImageRods.create(cols, rows, sf::Color::Black);
-
-		std::cout << "Rod Array Size: " << rodPotentials[0].size() << ", " << rodPotentials.size() << std::endl;
 
 		for (int i = 0; i < rows; ++i) {
 			for (int j = 0; j < cols; ++j) {
@@ -498,23 +502,30 @@ int main()
 		outputTexture.loadFromImage(outputImage);
 		sf::Sprite outputSprite;
 		outputSprite.setTexture(outputTexture);
-		outputSprite.setScale(12.0f,12.0f);
+		if(outputTexture.getSize().x < 200)
+			outputSprite.setScale(4.0f,4.0f);
 
 		sf::Texture rodsOutputTexture;
 		rodsOutputTexture.loadFromImage(outputImageRods);
 		sf::Sprite rodsOutputSprite;
 		rodsOutputSprite.setTexture(rodsOutputTexture);
-		rodsOutputSprite.setScale(4.0f, 4.0f);
+		if (rodsOutputTexture.getSize().x < 200)
+			rodsOutputSprite.setScale(4.0f, 4.0f);
 
 		sf::Texture conesOutputTexture;
 		conesOutputTexture.loadFromImage(outputImageCones);
 		sf::Sprite conesOutputSprite;
 		conesOutputSprite.setTexture(conesOutputTexture);
-		conesOutputSprite.setScale(4.0f, 4.0f);
+		if (conesOutputTexture.getSize().x < 200)
+			conesOutputSprite.setScale(4.0f, 4.0f);
 
 		sf::RenderWindow window(sf::VideoMode(outputSprite.getGlobalBounds().width, outputSprite.getGlobalBounds().height), "Overall");
 		sf::RenderWindow window2(sf::VideoMode(rodsOutputSprite.getGlobalBounds().width, outputSprite.getGlobalBounds().height), "Rods");
 		sf::RenderWindow window3(sf::VideoMode(conesOutputSprite.getGlobalBounds().width, outputSprite.getGlobalBounds().height), "Cones");
+
+		outputImage.saveToFile("Output/" + imageName + "OutputOverall.png");
+		outputImageRods.saveToFile("Output/" + imageName + "OutputOverallRods.png");
+		outputImageCones.saveToFile("Output/" + imageName + "OutputOverallCones.png");
 
 		while (window.isOpen() || window2.isOpen() || window3.isOpen())
 		{
@@ -547,10 +558,6 @@ int main()
 			window3.draw(conesOutputSprite);
 			window3.display();
 		}
-
-		outputImage.saveToFile("OutputOverall.png");
-		outputImageRods.saveToFile("OutputOverallRods.png");
-		outputImageCones.saveToFile("OutputOverallCones.png");
 
 	}
 

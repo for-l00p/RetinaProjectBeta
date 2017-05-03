@@ -7,6 +7,7 @@
 class Bipolar : public Neuron{
 public:
 	Bipolar();
+	int update(float elapsedSeconds) override;
 };
 
 #endif

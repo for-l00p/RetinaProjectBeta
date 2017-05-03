@@ -23,7 +23,7 @@ public:
 	void addInputCellSurround(Neuron* n);
 	void resetConnections();
 	std::vector<std::vector<double>> acquireInputs();
-	void update(float elapsedSeconds);
+	virtual int update(float elapsedSeconds);
 	double getCellMin();
 	double getCellMax();
 	double getPotential();
