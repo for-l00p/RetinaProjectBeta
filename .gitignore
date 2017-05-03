@@ -96,3 +96,4 @@ ipch/
 lib/**/*
 !lib/*.py
 !lib/*.md
+boost_1_63_0
