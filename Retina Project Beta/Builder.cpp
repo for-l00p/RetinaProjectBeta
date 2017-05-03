@@ -44,16 +44,13 @@ rodDistribution(rodIntervals.begin(), rodIntervals.end(), rodDensity.begin());
 
 std::default_random_engine generator;
 
-double getInterval(bool isCone) {
-	if (true)
+double getDistance(bool isCone) {
+	if (isCone)
 		return coneDistribution(generator);
-	return rodDistribution(generator);
+	else
+		return rodDistribution(generator);
 }
 
-double getDistance(bool isCone) {
-	//takes in an interval and uniformly generates a distance in that interval
-	return 2.5;
-}
 Cone* buildCone() {
 	// Method creates rods and cones based on polar coordinates 
 	//TO DO: Implement density based on data in cone & rod topography (.txt) files
@@ -88,6 +85,7 @@ Rod* buildRod() {
 	double r = getDistance(false);
 	double theta = ((double)rand() / (RAND_MAX)) * 2 * PI;
 
+	std::cout << r << "\n";
 	double x = r*cos(theta);
 	double y = r*sin(theta);
 
@@ -136,6 +134,11 @@ Photoreceptor* build(int x, int y) {
 int main()
 {
 	/*std::vector<std::vector<Photoreceptor*>> x = {};
+
+	for (int i = 0; i < 10000; i++) {
+		buildRod();
+	}
+
 	for (int i = 0; i < 10; i++) {
 		std::vector<Photoreceptor*> currentRow;
 		for (int j = 0; j < 10; j++) {
