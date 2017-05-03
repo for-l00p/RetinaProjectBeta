@@ -5,23 +5,13 @@
 
 //NOTE: This quadtree is based on a quadtree implementation from https://codereview.stackexchange.com/questions/84374/quadtree-implementation with several modifications.
 
-/*template <typename T>
-Quadtree<T>::Quadtree()
-{
-	nw = nullptr;
-	ne = nullptr;
-	sw = nullptr;
-	se = nullptr;
-	boundary = AABB();
-	position = "hello";
-	objects = std::vector< Data<T> >();
-} */
+
 Quadtree<Photoreceptor>::Quadtree() {
 	nw = nullptr;
 	ne = nullptr;
 	sw = nullptr;
 	se = nullptr;
-	boundary = AABB();
+	boundary = AABB(Point(5,5), Point(5,5));
 	position = "hello";
 	objects = std::vector< Data<Photoreceptor> >();
 }
@@ -50,7 +40,7 @@ Quadtree<Photoreceptor>::~Quadtree()
 //template <typename T>
 void Quadtree<Photoreceptor>::subdivide()
 {
-	Point qSize = boundary.halfSize;
+	Point qSize = Point(boundary.halfSize.x, boundary.halfSize.y);
 	Point qCentre = Point(boundary.centre.x - qSize.x, boundary.centre.y - qSize.y);
 	nw = new Quadtree(AABB(qCentre, qSize));
 
@@ -63,18 +53,20 @@ void Quadtree<Photoreceptor>::subdivide()
 	qCentre = Point(boundary.centre.x + qSize.x, boundary.centre.y + qSize.y);
 	se = new Quadtree(AABB(qCentre, qSize));
 }
-
+int counter = 0;
 //template <typename T>
 bool Quadtree<Photoreceptor>::insert(Data<Photoreceptor> d)
 {
-	std::cout << "putting stuff inside" << std::endl;
+	//std::cout << "putting stuff inside" << std::endl;
 	if (!boundary.contains(d.pos))
 	{
+		std::cout << "outside boundary" << std::endl;
 		return false;
 	}
-
+	std::cout << "inside boundary" << std::endl;
 	if (objects.size() < CAPACITY)
 	{
+		counter++;
 		objects.push_back(d);
 		return true;
 	}
@@ -147,11 +139,18 @@ std::vector< Data<Photoreceptor> > Quadtree<Photoreceptor>::queryRange(AABB rang
 }
 
 void Quadtree<Photoreceptor>::getTree() {
-	std::cout << "in getTree()" << std::endl;
+	//std::cout << "in getTree()" << std::endl;
 	if (!this) {
+		//std::cout << "root is null";
 		return;
 	}
-	std::cout << (this->position).c_str() << "  ";
+
+	for (auto i : this->objects)
+		std::cout << i.pos.x << ' ' << i.pos.y << std::endl;
+	//std::cout << (this->position).c_str() << "  ";
+	
+	nw->getTree();
+	ne->getTree();
 	sw->getTree();
 	se->getTree();
 }

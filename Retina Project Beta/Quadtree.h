@@ -24,9 +24,9 @@ AABB(Point centre = Point(), Point halfSize = Point()) : centre(centre), halfSiz
 
 bool contains(Point a) const
 {
-	if (a.x < centre.x + halfSize.x && a.x > centre.x - halfSize.x)
+	if (a.x < centre.x + halfSize.x && a.x >= centre.x - halfSize.x)
 	{
-		if (a.y < centre.y + halfSize.y && a.y > centre.y - halfSize.y)
+		if (a.y < centre.y + halfSize.y && a.y >= centre.y - halfSize.y)
 		{
 			return true;
 		}
