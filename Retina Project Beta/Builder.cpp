@@ -15,14 +15,15 @@
 #include "Rod.h"
 #include "Bipolar.h"
 #include "Ganglion.h"
-#include "Quadtree.h"
+//#include "Quadtree.h"
+#include "VoronoiTest.h"
 
 const double PI = 3.1415926535;
 const double probabilityRED=0.64;
 const double probabilityGREEN=0.32;
 //probabilityBlue= 0.02;
 
-Quadtree<Photoreceptor> retina = Quadtree<Photoreceptor>();
+//Quadtree<Photoreceptor> retina = Quadtree<Photoreceptor>();
 
 const int numCone = 10000;//number of cones to be generated
 const int numRds = 10000;//number of rods to be generated
@@ -134,7 +135,7 @@ Photoreceptor* build(int x, int y) {
 
 int main()
 {
-	std::vector<std::vector<Photoreceptor*>> x = {};
+	/*std::vector<std::vector<Photoreceptor*>> x = {};
 	for (int i = 0; i < 10; i++) {
 		std::vector<Photoreceptor*> currentRow;
 		for (int j = 0; j < 10; j++) {
@@ -150,7 +151,9 @@ int main()
 		x.push_back(currentRow);
 	}
 	retina.getTree(); 
+	 */
+	testingVoronoi();
+
 	int j;
 	std::cin >> j;
-
 }
