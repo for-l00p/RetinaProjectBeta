@@ -1,3 +1,4 @@
+#pragma once
 // Boost.Polygon library voronoi_basic_tutorial.cpp file
 
 //          Copyright Andrii Sydorchuk 2010-2012.
@@ -34,7 +35,7 @@ namespace boost {
 
 			static inline coordinate_type get(
 				const Point& point, orientation_2d orient) {
-				return (orient == HORIZONTAL) ? point.a : point.b;
+				return (orient == HORIZONTAL) ? point.x: point.y;
 			}
 		};
 

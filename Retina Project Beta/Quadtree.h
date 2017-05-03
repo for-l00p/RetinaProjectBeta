@@ -1,3 +1,5 @@
+#ifndef QUADTREE
+#define QUADTREE
 #pragma once
 #include "stdafx.h"
 #include <iostream>
@@ -5,16 +7,8 @@
 #include <cmath>
 #include <ctime>
 #include "Photoreceptor.h"
-#ifndef QUADTREE
-#define QUADTREE
+#include "Point.h"
 
-struct Point
-{
-	int x;
-	int y;
-	Point() :x(0), y(0) {}
-	Point(int xc, int yc) : x(xc), y(yc) {}
-};
 struct AABB
 {
 	Point centre;
