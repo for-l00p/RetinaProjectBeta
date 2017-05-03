@@ -16,6 +16,7 @@
 #include "Bipolar.h"
 #include "Ganglion.h"
 #include "Quadtree.h"
+#include "VoronoiTest.h"
 
 const double PI = 3.1415926535;
 const double probabilityRED=0.64;
@@ -130,11 +131,26 @@ int main()
 {
 	srand((unsigned int)time(NULL));
 
+	std::vector<Photoreceptor*> map;
+	for (int i = 0; i < 100; i++) {
+		Rod* temp = buildRod();
+		Cone* tempC = buildCone();
+		map.push_back(temp);
+		map.push_back(tempC);
+		Data<Photoreceptor> cur((Photoreceptor)*temp);
+		Data<Photoreceptor> curC((Photoreceptor)*tempC);
+		retina.insert(cur);
+		retina.insert(curC);
+	}
+	retina.getTree();
+
+	/*std::vector<std::vector<Photoreceptor*>> x = {};
+>>>>>>> 1c50f44a0342ceb5a8d7e3c3db2562596ec82e95
+
 	for (int i = 0; i < 10000; i++) {
 		buildCone();
 	}
 
-	std::vector<std::vector<Photoreceptor*>> x = {};
 	for (int i = 0; i < 10; i++) {
 		std::vector<Photoreceptor*> currentRow;
 		for (int j = 0; j < 10; j++) {
@@ -150,7 +166,9 @@ int main()
 		x.push_back(currentRow);
 	}
 	retina.getTree(); 
+	 */
+	testingVoronoi();
+
 	int j;
 	std::cin >> j;
-
 }

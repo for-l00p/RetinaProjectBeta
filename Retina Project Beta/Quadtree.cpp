@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include <iostream>
+#include "VoronoiTest.h"
 #include "Quadtree.h"
 
 //NOTE: This quadtree is based on a quadtree implementation from https://codereview.stackexchange.com/questions/84374/quadtree-implementation with several modifications.
