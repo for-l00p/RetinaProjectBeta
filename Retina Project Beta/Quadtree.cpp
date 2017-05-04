@@ -61,10 +61,10 @@ bool Quadtree<Photoreceptor>::insert(Data<Photoreceptor> d)
 	//std::cout << "putting stuff inside" << std::endl;
 	if (!boundary.contains(d.pos))
 	{
-		std::cout << "outside boundary" << std::endl;
+		//std::cout << "outside boundary" << std::endl;
 		return false;
 	}
-	std::cout << "inside boundary" << std::endl;
+	//std::cout << "inside boundary" << std::endl;
 	if (objects.size() < CAPACITY)
 	{
 		counter++;

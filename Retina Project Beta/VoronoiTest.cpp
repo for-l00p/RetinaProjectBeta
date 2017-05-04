@@ -79,8 +79,8 @@ int testingVoronoi() {
 	points.push_back(Point(0, 0));
 	points.push_back(Point(1, 6));
 	std::vector<Segment> segments;
-	segments.push_back(Segment(-4, 5, 5, -1));
-	segments.push_back(Segment(3, -11, 13, -1));
+//	segments.push_back(Segment(-4, 5, 5, -1));
+//	segments.push_back(Segment(3, -11, 13, -1));
 
 	// Construction of the Voronoi Diagram.
 	voronoi_diagram<double> vd;
@@ -116,7 +116,7 @@ int testingVoronoi() {
 	for (voronoi_diagram<double>::const_cell_iterator it = vd.cells().begin();
 		it != vd.cells().end(); ++it) {
 		if (it->contains_point()) {
-			std::size_t index = (it->source_index())%2;
+			std::size_t index = (it->source_index());
 			Point p = points[index];
 			printf("Cell #%ud contains a point: (%d, %d).\n",
 				cell_index, x(p), y(p));

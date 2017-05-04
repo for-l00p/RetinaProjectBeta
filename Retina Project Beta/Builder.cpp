@@ -85,7 +85,7 @@ Rod* buildRod() {
 	double r = getDistance(false);
 	double theta = ((double)rand() / (RAND_MAX)) * 2 * PI;
 
-	std::cout << r << "\n";
+	//std::cout << r << "\n";
 	double x = r*cos(theta);
 	double y = r*sin(theta);
 
@@ -134,7 +134,7 @@ Photoreceptor* build(int x, int y) {
 int main()
 {
 
-	std::vector<Photoreceptor*> map;
+	/*std::vector<Photoreceptor*> map;
 	for (int i = 0; i < 100; i++) {
 		Rod* temp = buildRod();
 		Cone* tempC = buildCone();
@@ -145,9 +145,9 @@ int main()
 		retina.insert(cur);
 		retina.insert(curC);
 	}
-	retina.getTree();
+	retina.getTree(); */
 
-	/*std::vector<std::vector<Photoreceptor*>> x = {};
+	std::vector<std::vector<Photoreceptor*>> x = {};
 
 	for (int i = 0; i < 10000; i++) {
 		buildRod();
@@ -168,9 +168,10 @@ int main()
 		x.push_back(currentRow);
 	}
 	retina.getTree(); 
-	 */
+	
 	testingVoronoi();
 
 	int j;
 	std::cin >> j;
+	return 0;
 }
