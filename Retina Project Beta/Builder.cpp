@@ -53,18 +53,15 @@ double getDistance(bool isCone) {
 
 Cone* buildCone() {
 	// Method creates rods and cones based on polar coordinates 
-	//TO DO: Implement density based on data in cone & rod topography (.txt) files
-	
-	srand((unsigned int)time(NULL));
 
 	double r = getDistance(true);
-	double theta = ((double)rand() / (RAND_MAX)) * 2 * PI;
+	double theta = ((double)rand() / (RAND_MAX)) * 2.0 * PI;
 
 	double x = r*cos(theta);
 	double y = r*sin(theta);
 
 	Cone* c;
-	
+	std::cout << x << ", " << y << "\n";
 	double coneType = ((double)rand() / (RAND_MAX));
 	if (coneType < probabilityRED)
 		c = new Cone(Cone::RED, x, y);
@@ -78,16 +75,19 @@ Cone* buildCone() {
 
 Rod* buildRod() {
 	// Method creates rods and cones based on polar coordinates 
-	//TO DO: Implement density based on data in cone & rod topography (.txt) files
-	
-	srand((unsigned int)time(NULL));
 
 	double r = getDistance(false);
-	double theta = ((double)rand() / (RAND_MAX)) * 2 * PI;
+	double theta = ((double)rand() / (RAND_MAX)) * 2.0 * PI;
 
+<<<<<<< HEAD
 	//std::cout << r << "\n";
+=======
+>>>>>>> d6bbcae20a1edad5f10102b8af9b572e90d79c96
 	double x = r*cos(theta);
 	double y = r*sin(theta);
+
+	
+	//std::cout << r << ", " << theta << ", " << cos(theta) << ", " << sin(theta) << "\n";
 
 	Rod* c = new Rod(x,y);
 	return c;
@@ -133,6 +133,7 @@ Photoreceptor* build(int x, int y) {
 
 int main()
 {
+	srand((unsigned int)time(NULL));
 
 	/*std::vector<Photoreceptor*> map;
 	for (int i = 0; i < 100; i++) {
@@ -150,14 +151,14 @@ int main()
 	std::vector<std::vector<Photoreceptor*>> x = {};
 
 	for (int i = 0; i < 10000; i++) {
-		buildRod();
+		buildCone();
 	}
 
 	for (int i = 0; i < 10; i++) {
 		std::vector<Photoreceptor*> currentRow;
 		for (int j = 0; j < 10; j++) {
 			auto* cell = build(i, j);
-			std::cout << cell->xc << " ";
+			//std::cout << cell->xc << " ";
 		//	Photoreceptor* current = build(i, j);
 			currentRow.push_back(cell);
 			Data<Photoreceptor> cur((Photoreceptor)*cell);
