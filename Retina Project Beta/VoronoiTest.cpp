@@ -76,8 +76,8 @@ int iterate_primary_edges2(const voronoi_diagram<double> &vd) {
 int testingVoronoi() {
 	// Preparing Input Geometries.
 	std::vector<Point> points;
-	points.push_back(Point(0, 0));
-	points.push_back(Point(1, 6));
+	points.push_back(Point(0.0, 0.0));
+	points.push_back(Point(1.2, 6.3));
 	std::vector<Segment> segments;
 //	segments.push_back(Segment(-4, 5, 5, -1));
 //	segments.push_back(Segment(3, -11, 13, -1));
@@ -120,25 +120,6 @@ int testingVoronoi() {
 			Point p = points[index];
 			printf("Cell #%ud contains a point: (%d, %d).\n",
 				cell_index, x(p), y(p));
-		}
-		else {
-			std::size_t index = it->source_index() - points.size();
-			Point p0 = low(segments[index]);
-			Point p1 = high(segments[index]);
-			if (it->source_category() ==
-				boost::polygon::SOURCE_CATEGORY_SEGMENT_START_POINT) {
-				printf("Cell #%ud contains segment start point: (%d, %d).\n",
-					cell_index, x(p0), y(p0));
-			}
-			else if (it->source_category() ==
-				boost::polygon::SOURCE_CATEGORY_SEGMENT_END_POINT) {
-				printf("Cell #%ud contains segment end point: (%d, %d).\n",
-					cell_index, x(p0), y(p0));
-			}
-			else {
-				printf("Cell #%ud contains a segment: ((%d, %d), (%d, %d)). \n",
-					cell_index, x(p0), y(p0), x(p1), y(p1));
-			}
 		}
 		++cell_index;
 	}

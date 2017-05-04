@@ -16,7 +16,8 @@
 #include "Bipolar.h"
 #include "Ganglion.h"
 #include "Quadtree.h"
-#include "VoronoiTest.h"
+//#include "VoronoiTest.h"
+#include "Voronoi.h"
 
 const double PI = 3.1415926535;
 const double probabilityRED=0.64;
@@ -61,7 +62,7 @@ Cone* buildCone() {
 	double y = r*sin(theta);
 
 	Cone* c;
-	std::cout << x << ", " << y << "\n";
+	//std::cout << x << ", " << y << "\n";
 	double coneType = ((double)rand() / (RAND_MAX));
 	if (coneType < probabilityRED)
 		c = new Cone(Cone::RED, x, y);
@@ -166,7 +167,29 @@ int main()
 		x.push_back(currentRow);
 	} */
 	
-	testingVoronoi();
+	//testingVoronoi();
+	using namespace vor;
+	vor::Voronoi * v;
+	vor::Vertices * ver; // vrcholy
+	vor::Vertices * dir; // smìry, kterými se pohybují
+	vor::Edges * edg;	 // hrany diagramu
+
+	double w = 10000;
+	v = new Voronoi();
+	ver = new Vertices();
+	dir = new Vertices();
+
+	srand(time(NULL));
+
+	for (int i = 0; i<50; i++)
+	{
+
+		ver->push_back(new Point(w * (double)rand() / (double)RAND_MAX, w * (double)rand() / (double)RAND_MAX));
+		dir->push_back(new Point((double)rand() / (double)RAND_MAX - 0.5, (double)rand() / (double)RAND_MAX - 0.5));
+	}
+
+	edg = v->GetEdges(ver, w, w);
+	std::cout << "voronois done!\n";
 
 	int j;
 	std::cin >> j;
