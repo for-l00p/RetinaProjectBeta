@@ -6,6 +6,15 @@ const char Photoreceptor::getType() { return 'P'; } // returns the type
 const char Photoreceptor::getRGB() { return '0'; } // creates a virtual method which is overriden by rod's and cones
 Photoreceptor::Photoreceptor() : Neuron(-40, -65, true) {}
 
+
+const double Photoreceptor::getX() {
+	return xc;
+}
+
+const double Photoreceptor::getY() {
+	return yc;
+}
+
 bool Photoreceptor::isAbsored(Photon p, Photoreceptor::ReceptorType t) {
 	return true; //TODO Implement probabilities (Stiles-Crawford, Spectral Sesnitivity, etc.)
 }

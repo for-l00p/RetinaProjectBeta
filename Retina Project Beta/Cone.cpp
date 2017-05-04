@@ -3,7 +3,7 @@
 #include "Cone.h"
 
 
-Cone::Cone(ReceptorType t, int x, int y) {
+Cone::Cone(ReceptorType t, double x, double y) {
 	receptorType = t; // stores RGB value which is unique to the cone
 	xc = x;
 	yc = y;
@@ -19,11 +19,11 @@ Cone::Cone(ReceptorType t, int x, int y) {
 	return 'G';
 }
 
- const float Cone::getX() {
+ const double Cone::getX() {
 	 return xc;
  }
 
- const float Cone::getY() {
+ const double Cone::getY() {
 	 return yc;
  }
 

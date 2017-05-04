@@ -12,7 +12,7 @@ Quadtree<Photoreceptor>::Quadtree() {
 	ne = nullptr;
 	sw = nullptr;
 	se = nullptr;
-	boundary = AABB(Point(5,5), Point(5,5));
+	boundary = AABB(Point(5.0,5.0), Point(5.0,5.0));
 	position = "hello";
 	objects = std::vector< Data<Photoreceptor> >();
 }

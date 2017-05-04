@@ -11,16 +11,16 @@ const char Rod::getRGB() {
 	return ' ';
 }
 
-Rod::Rod(int x, int y) {
+Rod::Rod(double x, double y) {
 	receptorType = Photoreceptor::ROD;
 	xc = x;
 	yc = y;
 }
-const float Rod::getX() {
+const double Rod::getX() {
 	return xc;
 }
 
-const float Rod::getY() {
+const double Rod::getY() {
 	return yc;
 }
 

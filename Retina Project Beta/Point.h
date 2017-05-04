@@ -4,10 +4,10 @@
 
 
 struct Point {
-	int x;
-	int y;
-	Point() :x(0), y(0) {}
-	Point(int xc, int yc) : x(xc), y(yc) {}
+	double x;
+	double y;
+	Point() :x(0.0), y(0.0) {}
+	Point(double xc, double yc) : x(xc), y(yc) {}
 };
 
 #endif

@@ -9,9 +9,9 @@ public:
 	//Rod();
 	virtual const char getType() override;
 	virtual const char getRGB() override;
-	Rod(int x, int y);
-	virtual const float getX();
-	virtual const float getY();
+	Rod(double x, double y);
+	virtual const double getX();
+	virtual const double getY();
 	virtual void update(float elapsedSeconds) override;
 };
 

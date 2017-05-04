@@ -22,10 +22,12 @@ protected:
 	ReceptorType receptorType;
 
 public:
-	int xc;
-	int yc;
+	double xc;
+	double yc;
 	virtual const char getType() override; // returns the type 
 	virtual const char getRGB(); // creates a virtual method which is overriden by rods and cones
+	virtual const double getX();
+	virtual const double getY();
 	static bool isAbsored(Photon p, ReceptorType t);
 	Photoreceptor();
 	void addPhotons(std::vector<Photon> newPhotons);

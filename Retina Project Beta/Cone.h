@@ -13,10 +13,10 @@ public:
 
 	//Cone(ReceptorType t);
 
-	Cone(ReceptorType t, int x, int y);
+	Cone(ReceptorType t, double x, double y);
 	virtual const char getRGB() override;
-	virtual const float getX();
-	virtual const float getY();
+	virtual const double getX();
+	virtual const double getY();
 	virtual void update(float elapsedSeconds) override;
 	virtual const char getType() override;
 };
