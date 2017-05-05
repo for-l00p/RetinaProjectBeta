@@ -3,10 +3,19 @@
 #include "Cone.h"
 
 
-Cone::Cone(ReceptorType t, double x, double y) {
+Cone::Cone(ReceptorType t, Point loc){
 	receptorType = t; // stores RGB value which is unique to the cone
-	xc = x;
-	yc = y;
+	location = loc;
+}
+
+Point Cone::getPoint()
+{
+	return location;
+}
+
+void Cone::setPoint(Point newLoc)
+{
+	location = newLoc;
 }
 
  const char Cone::getRGB() {
@@ -18,14 +27,6 @@ Cone::Cone(ReceptorType t, double x, double y) {
 	}
 	return 'G';
 }
-
- const double Cone::getX() {
-	 return xc;
- }
-
- const double Cone::getY() {
-	 return yc;
- }
 
 void Cone::update(float elapsedSeconds) {
 	Photoreceptor::update(elapsedSeconds);

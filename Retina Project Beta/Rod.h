@@ -9,9 +9,9 @@ public:
 	//Rod();
 	virtual const char getType() override;
 	virtual const char getRGB() override;
-	Rod(double x, double y);
-	virtual const double getX();
-	virtual const double getY();
+	Rod(Point loc);
+	virtual Point getPoint();
+	virtual void setPoint(Point newLoc);
 	virtual void update(float elapsedSeconds) override;
 };
 

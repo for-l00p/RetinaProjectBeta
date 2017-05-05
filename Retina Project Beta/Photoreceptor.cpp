@@ -2,17 +2,19 @@
 #include "stdafx.h"
 #include "Photoreceptor.h"
 
+
 const char Photoreceptor::getType() { return 'P'; } // returns the type 
 const char Photoreceptor::getRGB() { return '0'; } // creates a virtual method which is overriden by rod's and cones
+Photoreceptor::Photoreceptor(Point loc) : Neuron(-40, -65, true), location(loc) {}
 Photoreceptor::Photoreceptor() : Neuron(-40, -65, true) {}
 
-
-const double Photoreceptor::getX() {
-	return xc;
+Point Photoreceptor::getPoint() {
+	return location;
 }
 
-const double Photoreceptor::getY() {
-	return yc;
+void Photoreceptor::setPoint(Point newLoc)
+{
+	location = newLoc;
 }
 
 bool Photoreceptor::isAbsored(Photon p, Photoreceptor::ReceptorType t) {
