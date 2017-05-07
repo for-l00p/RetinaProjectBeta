@@ -140,7 +140,6 @@ std::vector< Data<Photoreceptor> > Quadtree<Photoreceptor>::queryRange(AABB rang
 }
 
 void Quadtree<Photoreceptor>::getTree() {
-	//std::cout << "in getTree()" << std::endl;
 	if (!this) {
 		//std::cout << "root is null";
 		return;
