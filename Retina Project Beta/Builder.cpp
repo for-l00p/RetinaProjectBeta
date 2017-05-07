@@ -18,6 +18,8 @@
 #include "Quadtree.h"
 #include <fstream>
 #include <sstream>
+#include "Smooth.h"
+
 
 const double PI = 3.1415926535;
 const double probabilityRED = 0.64;
@@ -111,10 +113,10 @@ int main()
 	const std::vector<double> data = readInFromFile("rod.txt");
 	//data.data();
 	double arr[30];
-	std::copy(data.begin(), data.end(), arr);
+	//std::copy(data.begin(), data.end(), arr);
 	// NOTE THAT array size must be pre-defined
 
-
+	smooth();
 	srand((unsigned int)time(NULL));
 
 	std::vector<Photoreceptor*> map;
