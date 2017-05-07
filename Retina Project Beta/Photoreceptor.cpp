@@ -5,6 +5,9 @@ const char Photoreceptor::getType() { return 'P'; } // returns the type
 const char Photoreceptor::getRGB() { return '0'; } // creates a virtual method which is overriden by rod's and cones
 Photoreceptor::Photoreceptor() : Neuron(-40, -65, true) {}
 
+double Photoreceptor::getX() { return x; }
+double Photoreceptor::getY() { return y; }
+
 double Photoreceptor::calculatePotential(int photonsHit, float elapsedSeconds) { return -40.0; }
 
 bool Photoreceptor::isAbsored(Photon p, Photoreceptor::ReceptorType t) {

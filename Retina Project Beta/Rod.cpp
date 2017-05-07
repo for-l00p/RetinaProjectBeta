@@ -20,6 +20,12 @@ Rod::Rod() {
 	receptorType = Photoreceptor::ROD;
 }
 
+Rod::Rod(double xPos, double yPos) {
+	receptorType = Photoreceptor::ROD;
+	x = xPos;
+	y = yPos;
+}
+
  int Rod::update(float elapsedSeconds) {
 	 int photons = Photoreceptor::update(elapsedSeconds);
 	 cellPotential = calculatePotential(photons, elapsedSeconds);

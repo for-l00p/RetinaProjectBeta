@@ -6,6 +6,12 @@ Cone::Cone(ReceptorType t) {
 	receptorType = t; // stores RGB value which is unique to the cone
 }
 
+Cone::Cone(ReceptorType t, double xPos, double yPos) {
+	receptorType = t; // stores RGB value which is unique to the cone
+	x = xPos;
+	y = yPos;
+}
+
  const char Cone::getRGB() {
 	if (receptorType == RED) {
 		return 'R';

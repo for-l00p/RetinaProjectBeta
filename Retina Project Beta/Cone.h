@@ -15,6 +15,7 @@ public:
 	static constexpr double MEAN_DENSITY_CONSTANT() { return 15; } //Ignore these for now
 
 	Cone(ReceptorType t);
+	Cone(ReceptorType t, double x, double y);
 	virtual const char getRGB() override;
 	virtual int update(float elapsedSeconds) override;
 	virtual const char getType() override;

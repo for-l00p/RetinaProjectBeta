@@ -1,112 +1,36 @@
+#pragma once
 #include "stdafx.h"
 #include <iostream>
-#include <string>
-#include <vector>
-#include <cmath>
-#include <ctime>
+//#include "VoronoiTest.h"
+#include "Quadtree.h"
 
 //NOTE: This quadtree is based on a quadtree implementation from https://codereview.stackexchange.com/questions/84374/quadtree-implementation with several modifications.
 
-struct Point
-{
-	float x = 0.0f;
-	float y = 0.0f;
-};
 
-struct AABB
-{
-	Point centre;
-	Point halfSize;
-
-	AABB(Point centre = Point(), Point halfSize = Point()) : centre(centre), halfSize(halfSize) {};
-
-	bool contains(Point a) const
-	{
-		if (a.x < centre.x + halfSize.x && a.x > centre.x - halfSize.x)
-		{
-			if (a.y < centre.y + halfSize.y && a.y > centre.y - halfSize.y)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool intersects(const AABB& other) const
-	{
-		//this right > that left                                          this left <s that right
-		if (centre.x + halfSize.x > other.centre.x - other.halfSize.x || centre.x - halfSize.x < other.centre.x + other.halfSize.x)
-		{
-			// This bottom > that top
-			if (centre.y + halfSize.y > other.centre.y - other.halfSize.y || centre.y - halfSize.y < other.centre.y + other.halfSize.y)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-};
-
-template <typename T>
-struct Data
-{
-	Point pos;
-	T* load;
-
-	Data(Point pos = {}, T* data = nullptrptr) : pos(pos), load(data) {};
-};
-
-
-template <class T>
-class Quadtree
-{
-private:
-	//4 children
-	Quadtree* nw;
-	Quadtree* ne;
-	Quadtree* sw;
-	Quadtree* se;
-
-	AABB boundary;
-
-	std::vector< Data<T> > objects;
-
-	static constexpr int CAPACITY = 4;
-public:
-	Quadtree<T>();
-	Quadtree<T>(AABB boundary);
-
-	~Quadtree();
-
-	bool insert(Data<T> d);
-	void subdivide();
-	std::vector< Data<T> > queryRange(AABB range);
-};
-
-template <class T>
-Quadtree<T>::Quadtree()
-{
+Quadtree<Photoreceptor>::Quadtree() {
 	nw = nullptr;
 	ne = nullptr;
 	sw = nullptr;
 	se = nullptr;
-	boundary = AABB();
-	objects = std::vector< Data<T> >();
+	boundary = QuadRegion(Point(5.0, 5.0), Point(5.0, 5.0));
+	position = "hello";
+	objects = std::vector< Data<Photoreceptor> >();
 }
 
-template <class T>
-Quadtree<T>::Quadtree(AABB boundary)
+//template <typename T>
+Quadtree<Photoreceptor>::Quadtree(QuadRegion boundary)
 {
-	objects = std::vector< Data<T> >();
+	objects = std::vector< Data<Photoreceptor> >();
 	nw = nullptr;
 	ne = nullptr;
 	sw = nullptr;
 	se = nullptr;
+	position = "hi";
 	this->boundary = boundary;
 }
 
-template <class T>
-Quadtree<T>::~Quadtree()
+//template <typename T>
+Quadtree<Photoreceptor>::~Quadtree()
 {
 	delete nw;
 	delete sw;
@@ -114,33 +38,36 @@ Quadtree<T>::~Quadtree()
 	delete se;
 }
 
-template <class T>
-void Quadtree<T>::subdivide()
+//template <typename T>
+void Quadtree<Photoreceptor>::subdivide()
 {
-	Point qSize = boundary.halfSize;
+	Point qSize = Point(boundary.halfSize.x, boundary.halfSize.y);
 	Point qCentre = Point(boundary.centre.x - qSize.x, boundary.centre.y - qSize.y);
-	nw = new Quadtree(AABB(qCentre, qSize));
+	nw = new Quadtree(QuadRegion(qCentre, qSize));
 
 	qCentre = Point(boundary.centre.x + qSize.x, boundary.centre.y - qSize.y);
-	ne = new Quadtree(AABB(qCentre, qSize));
+	ne = new Quadtree(QuadRegion(qCentre, qSize));
 
 	qCentre = Point(boundary.centre.x - qSize.x, boundary.centre.y + qSize.y);
-	sw = new Quadtree(AABB(qCentre, qSize));
+	sw = new Quadtree(QuadRegion(qCentre, qSize));
 
 	qCentre = Point(boundary.centre.x + qSize.x, boundary.centre.y + qSize.y);
-	se = new Quadtree(AABB(qCentre, qSize));
+	se = new Quadtree(QuadRegion(qCentre, qSize));
 }
-
-template <class T>
-bool Quadtree<T>::insert(Data<T> d)
+int counter = 0;
+//template <typename T>
+bool Quadtree<Photoreceptor>::insert(Data<Photoreceptor> d)
 {
+	//std::cout << "putting stuff inside" << std::endl;
 	if (!boundary.contains(d.pos))
 	{
+		//std::cout << "outside boundary" << std::endl;
 		return false;
 	}
-
+	//std::cout << "inside boundary" << std::endl;
 	if (objects.size() < CAPACITY)
 	{
+		counter++;
 		objects.push_back(d);
 		return true;
 	}
@@ -152,28 +79,32 @@ bool Quadtree<T>::insert(Data<T> d)
 
 	if (nw->insert(d))
 	{
+		position = "nw";
 		return true;
 	}
 	if (ne->insert(d))
 	{
+		position = "ne";
 		return true;
 	}
 	if (sw->insert(d))
 	{
+		position = "sw";
 		return true;
 	}
 	if (se->insert(d))
 	{
+		position = "se";
 		return true;
 	}
 
 	return false;
 }
 
-template <class T>
-std::vector< Data<T> > Quadtree<T>::queryRange(AABB range)
+//template <typename T>
+std::vector< Data<Photoreceptor> > Quadtree<Photoreceptor>::queryRange(QuadRegion range)
 {
-	std::vector< Data<T> > pInRange = std::vector< Data<T> >();
+	std::vector< Data<Photoreceptor> > pInRange = std::vector< Data<Photoreceptor> >();
 
 	if (!boundary.intersects(range))
 	{
@@ -193,7 +124,7 @@ std::vector< Data<T> > Quadtree<T>::queryRange(AABB range)
 		return pInRange;
 	}
 
-	std::vector< Data<T> > temp = nw->queryRange(range);
+	std::vector< Data<Photoreceptor> > temp = nw->queryRange(range);
 	pInRange.insert(pInRange.end(), temp.begin(), temp.end());
 
 	temp = ne->queryRange(range);
@@ -206,4 +137,21 @@ std::vector< Data<T> > Quadtree<T>::queryRange(AABB range)
 	pInRange.insert(pInRange.end(), temp.begin(), temp.end());
 
 	return pInRange;
+}
+
+void Quadtree<Photoreceptor>::getTree() {
+	//std::cout << "in getTree()" << std::endl;
+	if (!this) {
+		//std::cout << "root is null";
+		return;
+	}
+
+	for (auto i : this->objects)
+		std::cout << i.pos.x << ' ' << i.pos.y << std::endl;
+	//std::cout << (this->position).c_str() << "  ";
+
+	nw->getTree();
+	ne->getTree();
+	sw->getTree();
+	se->getTree();
 }

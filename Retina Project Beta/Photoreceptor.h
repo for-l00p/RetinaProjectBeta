@@ -18,6 +18,7 @@ public:
 protected:
 	//double eccentricity;
 	//double locationAngle; //Relative to straight up
+	double x, y;
 	std::vector<Photon> photonQueue;
 	ReceptorType receptorType;
 
@@ -26,6 +27,8 @@ protected:
 public:
 	virtual const char getType() override; // returns the type 
 	virtual const char getRGB(); // creates a virtual method which is overriden by rods and cones
+	double getX();
+	double getY();
 	static bool isAbsored(Photon p, ReceptorType t);
 	Photoreceptor();
 	void addPhotons(std::vector<Photon> newPhotons);
