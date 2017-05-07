@@ -17,8 +17,12 @@
 #include "Ganglion.h"
 #include "Quadtree.h"
 //#include "VoronoiTest.h"
+<<<<<<< HEAD
 #include "Voronoi.h"
 #include "fstream"
+=======
+//#include "Voronoi.h"
+>>>>>>> 28afbed088b4d8520766d626d0297452c14a232b
 
 const double PI = 3.1415926535;
 const double probabilityRED=0.64;
@@ -66,12 +70,13 @@ Cone* buildCone() {
 	Cone* c;
 	//std::cout << x << ", " << y << "\n";
 	double coneType = ((double)rand() / (RAND_MAX));
+	Point loc = Point(x, y);
 	if (coneType < probabilityRED)
-		c = new Cone(Cone::RED, x, y);
+		c = new Cone(Cone::RED, loc);
 	else if (coneType < probabilityRED + probabilityGREEN)
-		c = new Cone(Cone::GREEN,x,y);
+		c = new Cone(Cone::GREEN,loc);
 	else 
-		c = new Cone(Cone::BLUE,x,y);
+		c = new Cone(Cone::BLUE,loc);
 	return c;
 }
 
@@ -88,11 +93,11 @@ Rod* buildRod() {
 	
 	//std::cout << r << ", " << theta << ", " << cos(theta) << ", " << sin(theta) << "\n";
 
-	Rod* c = new Rod(x,y);
+	Rod* c = new Rod(Point(x,y));
 	return c;
 }
  
-Photoreceptor* build(int x, int y) {
+/*Photoreceptor* build(int x, int y) {
 	float r = std::sqrtf((x - 5)*(x - 5) + (y - 5)*(y - 5));
 	if (r <= 3) {
 		if (rand() % 3 < 2) {
@@ -128,7 +133,7 @@ Photoreceptor* build(int x, int y) {
 	if (i < 4)
 		return new Cone(Cone::GREEN, x, y);
 	return new Cone(Cone::RED, x, y);
-}
+} */
 
 int main()
 {
@@ -169,12 +174,12 @@ int main()
 		x.push_back(currentRow);
 	} */
 	
-	//testingVoronoi();
+	/*testingVoronoi();
 	using namespace vor;
 	vor::Voronoi * v;
-	vor::Vertices * ver; // vrcholy
-	vor::Vertices * dir; // smìry, kterými se pohybují
-	vor::Edges * edg;	 // hrany diagramu
+	vor::Vertices * ver; 
+	vor::Vertices * dir; 
+	vor::Edges * edg;	 
 
 	double w = 10000;
 	v = new Voronoi();
@@ -183,15 +188,15 @@ int main()
 
 	srand(time(NULL));
 
-	for (int i = 0; i<50; i++)
+/*	for (int i = 0; i<50; i++)
 	{
 
 		ver->push_back(new Point(w * (double)rand() / (double)RAND_MAX, w * (double)rand() / (double)RAND_MAX));
 		dir->push_back(new Point((double)rand() / (double)RAND_MAX - 0.5, (double)rand() / (double)RAND_MAX - 0.5));
-	}
+	} 
 
-	edg = v->GetEdges(ver, w, w);
-	std::cout << "voronois done!\n";
+	//edg = v->GetEdges(ver, w, w);
+	std::cout << "voronois done!\n"; */
 
 	int j;
 	std::cin >> j;

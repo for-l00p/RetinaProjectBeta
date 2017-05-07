@@ -54,7 +54,7 @@ struct Data
 
 	Data(Photoreceptor cell) {
 		neuron = cell;
-		pos = Point(cell.xc, cell.yc);
+		pos = cell.getPoint();
 	} 
 /*	T setPoint() {
 		pos = Point(cell.xc, cell.yc);

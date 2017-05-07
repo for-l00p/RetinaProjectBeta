@@ -11,19 +11,22 @@ const char Rod::getRGB() {
 	return ' ';
 }
 
-Rod::Rod(double x, double y) {
+Rod::Rod(Point loc) {
 	receptorType = Photoreceptor::ROD;
-	xc = x;
-	yc = y;
-}
-const double Rod::getX() {
-	return xc;
+	location = loc;
 }
 
-const double Rod::getY() {
-	return yc;
+
+Point Rod::getPoint()
+{
+	return location;
 }
 
- void Rod::update(float elapsedSeconds) {
+void Rod::setPoint(Point newLoc)
+{
+	location = newLoc;
+}
+
+void Rod::update(float elapsedSeconds) {
 	 Photoreceptor::update(elapsedSeconds);
 }
