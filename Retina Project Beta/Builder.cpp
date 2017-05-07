@@ -18,6 +18,7 @@
 #include "Quadtree.h"
 //#include "VoronoiTest.h"
 #include "Voronoi.h"
+#include "fstream"
 
 const double PI = 3.1415926535;
 const double probabilityRED=0.64;
@@ -28,6 +29,7 @@ Quadtree<Photoreceptor> retina = Quadtree<Photoreceptor>();
 
 const int numCone = 10000;//number of cones to be generated
 const int numRds = 10000;//number of rods to be generated
+
 
 //eccentricities for data points for photoreceptors
 std::array<double, 12> coneIntervals{ 0.12219, 7.9600897, 17.49904, 26.76169, 35.5145, 54.50688, 72.42695, 90.7516, 108.60589, 126.01612, 144.24867, 162.93843 };

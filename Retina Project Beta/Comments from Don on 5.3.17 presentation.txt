@@ -1,0 +1,31 @@
+Compare our data/model with those of others
+
+Put the bar chart of the eccentricity next to the circular graph
+
+Use something other than Excel to display, make sure its circular
+
+Use smaller dots in circular figure
+
+Use a 3D plot, would be more revealing for the peak of the cones/rods.
+I.e. 3D histogram
+
+A list of references at the end (of paper)
+
+Include a bunch of questions under a future section, questions we would've liked to answer
+
+Take and reference pictures in perception psychology textbooks (i.e. Mathers) and compare our results with theirs
+
+Give exact algorithm for the distribution once done
+
+For edge finding algorithm, instead of lightness and darkness of edges, just directly change the colors onto the original image
+
+Be able to vary these edge detection features based on distance from retina/ size of image
+
+Explain how it could be useful in a vision course, connection to shortcut filters
+
+Sfamuato - technique by artists in the Renaissance where paintings did not have edges 
+
+In paper, have an intro paragraph with "why are we doing this?"
+
+
+
