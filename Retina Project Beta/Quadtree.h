@@ -76,7 +76,7 @@ protected:
 	std::string position;
 	std::vector< Data<T> > objects;
 
-	static constexpr int CAPACITY = 4;
+	static constexpr int CAPACITY = 1;
 public:
 	Quadtree<T>();
 	Quadtree<T>(AABB boundary);
