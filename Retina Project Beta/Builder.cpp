@@ -54,17 +54,19 @@ ganglionDistribution(ganglionIntervals.begin(), ganglionIntervals.end(), ganglio
 
 std::default_random_engine generator;
 
-double getDistance(bool isCone) {
-	if (isCone)
+double getDistance(int type) {//0 is cone, 1 is rod, 2 is ganglion
+	if (type == 0)
 		return coneDistribution(generator);
-	else
+	else if (type == 1)
 		return rodDistribution(generator);
+	else 
+		return ganglionDistribution(generator);
 }
 
-Neuron* build() {
+Neuron* build(int type) {// 0 is cone, 1 is rod, 2 is ganglion
 	// Method creates rods and cones based on polar coordinates 
 
-	double r = getDistance(true);
+	double r = getDistance(type);
 	double theta = ((double)rand() / (RAND_MAX)) * 2.0 * PI;
 
 	double x = r*cos(theta);
