@@ -41,7 +41,7 @@ Quadtree<Photoreceptor>::~Quadtree()
 //template <typename T>
 void Quadtree<Photoreceptor>::subdivide()
 {
-	Point qSize = Point(boundary.halfSize.x, boundary.halfSize.y);
+	Point qSize = Point(boundary.halfSize.x/2, boundary.halfSize.y/2);
 	Point qCentre = Point(boundary.centre.x - qSize.x, boundary.centre.y - qSize.y);
 	nw = new Quadtree(AABB(qCentre, qSize));
 
