@@ -16,14 +16,14 @@
 #include "Bipolar.h"
 #include "Ganglion.h"
 #include "Quadtree.h"
-//#include "VoronoiTest.h"
-#include "Voronoi.h"
-#include "fstream"
-//#include "Voronoi.h"
+#include <fstream>
+#include <sstream>
+//#include "Smooth.h"
+
 
 const double PI = 3.1415926535;
-const double probabilityRED=0.64;
-const double probabilityGREEN=0.32;
+const double probabilityRED = 0.64;
+const double probabilityGREEN = 0.32;
 //probabilityBlue= 0.02;
 
 Quadtree<Photoreceptor> retina = Quadtree<Photoreceptor>();
@@ -42,6 +42,7 @@ std::array<double, 31> coneDensity{ 197.297, 162.184, 121.215, 99.1666, 79.8188,
 std::array<double, 29> rodDensity{ 0, 0.0148568, 0.0273174, 1.42578, 3.37921, 13.3798, 26.4255, 36.1491, 45.0402, 52.8242, 59.7777, 64.7912, 69.2511, 68.9053, 107.757, 132.022, 138.163, 136.795, 133.659, 126.543, 119.869, 111.87, 105.196, 98.0802, 90.0802, 82.9626, 75.4076, 68.2931, 60.7351 };
 std::array<double, 31> ganglionDensity{ 0, 0.110385, 0.783357, 1.56869, 4.03902, 10.8902, 16.6178, 21.1094, 22.4547, 23.9128, 25.5951, 26.7159, 26.7133, 22.7663, 16.2357, 11.2772, 7.89242, 3.93258, 3.90423, 2.3493, 1.67324, 1.13239, 0.828169, 0.659155, 0.490141, 0.422535, 0.371831, 0.304225, 0.253521, 0.202817, 0.202817 };
 
+
 std::piecewise_linear_distribution<double>
 coneDistribution(coneIntervals.begin(), coneIntervals.end(), coneDensity.begin());
 
@@ -53,17 +54,33 @@ ganglionDistribution(ganglionIntervals.begin(), ganglionIntervals.end(), ganglio
 
 std::default_random_engine generator;
 
-double getDistance(int type) {//0 is cone, 1 is rod, 2 is ganglion
-	if (type == 0)
-		return coneDistribution(generator);
-	else if (type == 1)
+std::vector<double> readInFromFile(std::string fileName) {
+	std::vector<double> data;
+	std::ifstream file(fileName);
+	std::string line;
+	while (std::getline(file, line)) {
+		std::istringstream iss(line);
+		double a;
+		if ((!(iss >> a))) {
+			break;
+		}
+		data.push_back(a);
+	}
+	/*for (auto i = data.begin(); i != data.end(); ++i)
+		std::cout << *i << ' '; */
+	return data;
+}
+
+double getDistance(int type) {// 0 is rod, 1 is cone, 2 is ganglion
+	if (type == 1)
 		return rodDistribution(generator);
-	else 
+	else if (type == 2)
+		return coneDistribution(generator);
+	else
 		return ganglionDistribution(generator);
 }
 
-Neuron* build(int type) {// 0 is cone, 1 is rod, 2 is ganglion
-	// Method creates rods and cones based on polar coordinates 
+Neuron* build(int type) {//0 is rod, 1 is cone, 2 is ganglion
 
 	double r = getDistance(type);
 	double theta = ((double)rand() / (RAND_MAX)) * 2.0 * PI;
@@ -71,7 +88,10 @@ Neuron* build(int type) {// 0 is cone, 1 is rod, 2 is ganglion
 	double x = r*cos(theta);
 	double y = r*sin(theta);
 
-	std::cout << "" + x + ", " + y + "\n";
+	std::cout << x;
+	std::cout << ", ";
+	std::cout << y;
+	std::cout << "\n";
 
 	Neuron* n;
 	//std::cout << x << ", " << y << "\n";
@@ -81,7 +101,7 @@ Neuron* build(int type) {// 0 is cone, 1 is rod, 2 is ganglion
 		n = new Rod(loc);
 	}
 	else if (type == 1) {
-		n = new Cone(loc);
+		n = new Cone(Photoreceptor::RED, loc);
 	}
 	else {
 		n = new Ganglion(loc);
@@ -91,66 +111,69 @@ Neuron* build(int type) {// 0 is cone, 1 is rod, 2 is ganglion
 
 int main()
 {
+	//just call this multiple times and replacing "rod.txt" with the string of the text file name
+	const std::vector<double> data = readInFromFile("rod.txt");
+	//data.data();
+	double arr[30];
+	//std::copy(data.begin(), data.end(), arr);
+	// NOTE THAT array size must be pre-defined
+
 	srand((unsigned int)time(NULL));
 
-	std::vector<Photoreceptor*> map;
-	for (int i = 0; i < 100; i++) {
-		Rod* temp = (Rod) build(0);
-		map.push_back(temp);
+	std::ofstream outfile;
+	outfile.open("outputCells.txt", std::ofstream::out | std::ofstream::trunc);
+
+	//std::vector<Photoreceptor*> map;
+	for (int i = 0; i < 9000; i++) {
+		if (i % 900000 == 0) {
+			for (int j = 0; j < 100; j++) {
+				std::cout << "Percentage done: " << (i / 90000) << "\n";
+			}
+		}
+		Neuron* temp = build(0);
+		//map.push_back(temp);
+		//Data<Photoreceptor> cur((Photoreceptor)*temp);
+		//retina.insert(cur);
+	}
+	std::ifstream infile;
+
+	outfile.close();
+
+	//smooth();
+
+	std::ifstream file("inputCell.txt");
+	std::string line;
+	while (std::getline(file, line)) {
+		std::istringstream iss(line);
+		double a,b;
+		char c;
+		if ((!(iss >> a >> c>> b))) {
+			break;
+		}
+		std::cout << a << "\t" << b << std::endl;
+		Rod* temp = &Rod(Point(a, b));
 		Data<Photoreceptor> cur((Photoreceptor)*temp);
 		retina.insert(cur);
 	}
-//	retina.getTree(); 
 
-	std::vector<std::vector<Photoreceptor*>> x = {};
+	//std::vector<std::vector<Photoreceptor*>> x = {};
+
+
+
+	/* outfile.open("outputCells.txt", std::ofstream::out | std::ofstream::trunc);
 
 	for (int i = 0; i < 10000; i++) {
-		build();
+		buildCone();
 		Cone* tempC = buildCone();
-		map.push_back(tempC);
-		Data<Photoreceptor> curC((Photoreceptor)*tempC);
-		retina.insert(curC);
+		//map.push_back(tempC);
+		//Data<Photoreceptor> curC((Photoreceptor)*tempC);
+		//retina.insert(curC);
 	}
+	outfile.close(); */
+
+	//std::cout << "this is the quadtree";
 
 	retina.getTree();
-	/*for (int i = 0; i < 10; i++) {
-		std::vector<Photoreceptor*> currentRow;
-		for (int j = 0; j < 10; j++) {
-			auto* cell = build(i, j);
-			//std::cout << cell->xc << " ";
-		//	Photoreceptor* current = build(i, j);
-			currentRow.push_back(cell);
-			Data<Photoreceptor> cur((Photoreceptor)*cell);
-			//cur.cell = *current;
-			//cur.setPoint();
-			retina.insert(cur);
-		}
-		x.push_back(currentRow);
-	} */
-	
-	/*testingVoronoi();
-	using namespace vor;
-	vor::Voronoi * v;
-	vor::Vertices * ver; 
-	vor::Vertices * dir; 
-	vor::Edges * edg;	 
-
-	double w = 10000;
-	v = new Voronoi();
-	ver = new Vertices();
-	dir = new Vertices();
-
-	srand(time(NULL));
-
-/*	for (int i = 0; i<50; i++)
-	{
-
-		ver->push_back(new Point(w * (double)rand() / (double)RAND_MAX, w * (double)rand() / (double)RAND_MAX));
-		dir->push_back(new Point((double)rand() / (double)RAND_MAX - 0.5, (double)rand() / (double)RAND_MAX - 0.5));
-	} 
-
-	//edg = v->GetEdges(ver, w, w);
-	std::cout << "voronois done!\n"; */
 
 	int j;
 	std::cin >> j;

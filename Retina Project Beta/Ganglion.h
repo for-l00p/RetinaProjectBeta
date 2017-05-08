@@ -1,11 +1,17 @@
 #pragma once
-#include "Neuron.h"
 
 #ifndef GANGLION
 #define GANGLION
 
+#include "Neuron.h"
+#include "Point.h"
+
+
 class Ganglion : public Neuron {
-	Ganglion();
+private:
+	Point location;
+public:
+	Ganglion(Point loc);
 };
 
 #endif

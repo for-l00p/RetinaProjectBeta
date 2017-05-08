@@ -8,6 +8,7 @@ Neuron::Neuron() {
 	cellMax = -65;
 	cellPotential = cellMin;
 	isGraded = false;
+
 }
 
 Neuron::Neuron(double potentialMin, double potentialMax) {

@@ -48,30 +48,18 @@
     <ClInclude Include="Quadtree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VoronoiTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VParabola.h">
+    <ClInclude Include="Smooth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Voronoi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VEdge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VEvent.h">
+    <ClInclude Include="cvt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Retina Project Beta.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Bipolar.cpp">
@@ -101,13 +89,7 @@
     <ClCompile Include="Builder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VoronoiTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VParabola.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Voronoi.cpp">
+    <ClCompile Include="cvt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

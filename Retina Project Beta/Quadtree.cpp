@@ -41,7 +41,7 @@ Quadtree<Photoreceptor>::~Quadtree()
 //template <typename T>
 void Quadtree<Photoreceptor>::subdivide()
 {
-	Point qSize = Point(boundary.halfSize.x, boundary.halfSize.y);
+	Point qSize = Point(boundary.halfSize.x/2, boundary.halfSize.y/2);
 	Point qCentre = Point(boundary.centre.x - qSize.x, boundary.centre.y - qSize.y);
 	nw = new Quadtree(AABB(qCentre, qSize));
 
@@ -140,14 +140,16 @@ std::vector< Data<Photoreceptor> > Quadtree<Photoreceptor>::queryRange(AABB rang
 }
 
 void Quadtree<Photoreceptor>::getTree() {
-	//std::cout << "in getTree()" << std::endl;
 	if (!this) {
 		//std::cout << "root is null";
 		return;
 	}
+	//std::cout << "hello";
+	for (auto i : this->objects) {
+		//std::cout << "hello" << std::endl;
 
-	for (auto i : this->objects)
-		std::cout << i.pos.x << ' ' << i.pos.y << std::endl;
+		//std::cout << i.pos.x << ' ' << i.pos.y << std::endl;
+	}
 	//std::cout << (this->position).c_str() << "  ";
 	
 	nw->getTree();
