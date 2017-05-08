@@ -3,9 +3,9 @@
 
 
 int dim = 2;
-int k = 1; //# of clusters to have
+int k = 100; //# of clusters to have
 int maxPts = 100;
-int stages = 2;
+int stages = 1;
 static ifstream dataStream;
 
 
@@ -20,8 +20,8 @@ KMterm	term(100, 0, 0, 0,		// run for 100 stages
 void smooth()
 {
 	istream* dataIn = NULL;
-	file.open("result_pts.txt");
-	dataStream.open("data_pts.txt", ios::in);
+	file.open("inputCells.txt");
+	dataStream.open("outputCells.txt", ios::in);
 	if (!dataStream) {
 		cerr << "Cannot open data file\n";
 	//	kmExit(1);
@@ -52,8 +52,7 @@ void smooth()
 	KMlocalLloyds kmLloyds(ctrs, term);		// repeated Lloyd's
 	ctrs = kmLloyds.execute();			// execute
 	printSummary(kmLloyds, dataPts, ctrs);	// print summary
-	cout << "Average distortion: " << ctrs.getDist(false) / nPts << "\n";
-	ctrs.print();
+
 	file.close();
 
 	//kmExit(0);
@@ -111,7 +110,7 @@ void printSummary(
 		*kmOut << "   " << setw(5) << i
 			<< "   " << setw(5) << closeCtr[i]
 			<< "   " << setw(10) << sqDist[i]
-			<< "\n";
+			<< "   " << setw(5) << dataPts.getPts()[i][0] << "," << dataPts.getPts()[i][1] << "\n";
 	}
 	*kmOut << ")\n";
 	delete[] closeCtr;

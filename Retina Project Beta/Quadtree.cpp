@@ -144,9 +144,12 @@ void Quadtree<Photoreceptor>::getTree() {
 		//std::cout << "root is null";
 		return;
 	}
+	std::cout << "hello";
+	for (auto i : this->objects) {
+		std::cout << "hello" << std::endl;
 
-	for (auto i : this->objects)
 		std::cout << i.pos.x << ' ' << i.pos.y << std::endl;
+	}
 	//std::cout << (this->position).c_str() << "  ";
 	
 	nw->getTree();

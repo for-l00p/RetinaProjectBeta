@@ -18,7 +18,7 @@
 #include "Quadtree.h"
 #include <fstream>
 #include <sstream>
-#include "Smooth.h"
+//#include "Smooth.h"
 
 
 const double PI = 3.1415926535;
@@ -59,8 +59,8 @@ std::vector<double> readInFromFile(std::string fileName) {
 		}
 		data.push_back(a);
 	}
-	for (auto i = data.begin(); i != data.end(); ++i)
-		std::cout << *i << ' ';
+	/*for (auto i = data.begin(); i != data.end(); ++i)
+		std::cout << *i << ' '; */
 	return data;
 }
 
@@ -116,28 +116,58 @@ int main()
 	//std::copy(data.begin(), data.end(), arr);
 	// NOTE THAT array size must be pre-defined
 
-	smooth();
 	srand((unsigned int)time(NULL));
 
-	std::vector<Photoreceptor*> map;
+	std::ofstream outfile;
+	outfile.open("outputCells.txt", std::ofstream::out | std::ofstream::trunc);
+
+	//std::vector<Photoreceptor*> map;
 	for (int i = 0; i < 100; i++) {
 		Rod* temp = buildRod();
-		map.push_back(temp);
+		outfile << temp->getPoint().x << "\t" << temp->getPoint().y << "\n";
+		//map.push_back(temp);
+		//Data<Photoreceptor> cur((Photoreceptor)*temp);
+		//retina.insert(cur);
+	}
+	std::ifstream infile;
+
+	outfile.close();
+
+	//smooth();
+
+	std::ifstream file("inputCell.txt");
+	std::string line;
+	while (std::getline(file, line)) {
+		std::istringstream iss(line);
+		double a,b;
+		char c;
+		if ((!(iss >> a >> c>> b))) {
+			break;
+		}
+		std::cout << a << "\t" << b << std::endl;
+		Rod* temp = &Rod(Point(a, b));
 		Data<Photoreceptor> cur((Photoreceptor)*temp);
 		retina.insert(cur);
 	}
 
-	std::vector<std::vector<Photoreceptor*>> x = {};
+	//std::vector<std::vector<Photoreceptor*>> x = {};
+
+
+
+	/* outfile.open("outputCells.txt", std::ofstream::out | std::ofstream::trunc);
 
 	for (int i = 0; i < 10000; i++) {
 		buildCone();
 		Cone* tempC = buildCone();
-		map.push_back(tempC);
-		Data<Photoreceptor> curC((Photoreceptor)*tempC);
-		retina.insert(curC);
+		//map.push_back(tempC);
+		//Data<Photoreceptor> curC((Photoreceptor)*tempC);
+		//retina.insert(curC);
 	}
+	outfile.close(); */
 
-	//retina.getTree();
+	std::cout << "this is the quadtree";
+
+	retina.getTree();
 
 	int j;
 	std::cin >> j;
