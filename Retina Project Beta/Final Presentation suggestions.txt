@@ -1,0 +1,25 @@
+General overview of goals of the project
+Structure of the project
+	Pictures of photoreceptors, etc (pull all images from one source)
+Slides on each individual cell & how we modeled
+	Spread the graphs out more in our presentation
+	Graphs should use fewer sig figs, also try to make the 2 graphs as similar as possible
+	Have all axis line up.
+	Images on sides, brief description on them
+	Try to not have to need to go back a slide
+	Dots should be very small, it should be square, not rectangular
+	On slide with distribution, also show the bar graph and scatterplot
+	Have slide that shows cones and rods on the same slide
+On slides with few bullet points, visually separate out more
+Put assumptions/limitations earlier in the presentation
+On processing images slides, put images more side by side and more consistent in size
+	Larger images!
+	Include an optical illusion or two
+	Processing images percent difference should correspond with the previous images
+	Make sure aspect ratios are equal
+Next steps/future section
+
+General tips:
+Graphs should have title explaining it, don't need paragraph
+Titles should all line up
+Other things should also line up
