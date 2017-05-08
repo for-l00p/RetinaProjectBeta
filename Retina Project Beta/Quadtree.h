@@ -9,16 +9,21 @@
 #include "Photoreceptor.h"
 #include "Point.h"
 
+
 struct QuadRegion
 {
 	Point centre;
 	Point halfSize;
 
 	QuadRegion(Point centre = Point(), Point halfSize = Point()) : centre(centre), halfSize(halfSize) {};
+	QuadRegion(double topLeftX, double topLeftY, double width, double height) {};
 
-	bool contains(Point a) const{
-		if (a.x < centre.x + halfSize.x && a.x >= centre.x - halfSize.x){
-			if (a.y < centre.y + halfSize.y && a.y >= centre.y - halfSize.y){
+	bool contains(Point a) const
+	{
+		if (a.x < centre.x + halfSize.x && a.x >= centre.x - halfSize.x)
+		{
+			if (a.y < centre.y + halfSize.y && a.y >= centre.y - halfSize.y)
+			{
 				return true;
 			}
 		}
@@ -28,9 +33,11 @@ struct QuadRegion
 	bool intersects(const QuadRegion& other) const
 	{
 		//this right > that left                                          this left <s that right
-		if (centre.x + halfSize.x > other.centre.x - other.halfSize.x || centre.x - halfSize.x < other.centre.x + other.halfSize.x){
+		if (centre.x + halfSize.x > other.centre.x - other.halfSize.x || centre.x - halfSize.x < other.centre.x + other.halfSize.x)
+		{
 			// This bottom > that top
-			if (centre.y + halfSize.y > other.centre.y - other.halfSize.y || centre.y - halfSize.y < other.centre.y + other.halfSize.y){
+			if (centre.y + halfSize.y > other.centre.y - other.halfSize.y || centre.y - halfSize.y < other.centre.y + other.halfSize.y)
+			{
 				return true;
 			}
 		}
@@ -38,8 +45,8 @@ struct QuadRegion
 	}
 };
 
-
 template <typename T>
+
 struct Data
 {
 	Point pos;
@@ -49,10 +56,10 @@ struct Data
 
 	Data(Photoreceptor cell) {
 		neuron = cell;
-		pos = Point(cell.getX(), cell.getY());
-	}
-	/*	T setPoint() {
-	pos = Point(cell.xc, cell.yc);
+		pos = cell.getPoint();
+	} 
+/*	T setPoint() {
+		pos = Point(cell.xc, cell.yc);
 	}*/
 };
 
@@ -80,8 +87,9 @@ public:
 
 	bool insert(Data<T> d);
 	void subdivide();
+	QuadRegion getBoundary();
 	std::vector< Data<T> > queryRange(QuadRegion range);
-	void getTree();
+	void getTree(std::string prechain, int level = 1);
 };
 
 #endif

@@ -4,7 +4,7 @@
 
 const char Neuron::getType() { return 'N'; } // Allows for quick type checking of an object
 Neuron::Neuron() {
-	cellMin = -35;
+	cellMin = -40;
 	cellMax = -65;
 	cellPotential = cellMin;
 	isGraded = false;

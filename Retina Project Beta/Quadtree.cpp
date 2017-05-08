@@ -3,6 +3,7 @@
 #include <iostream>
 //#include "VoronoiTest.h"
 #include "Quadtree.h"
+#include <string>
 
 //NOTE: This quadtree is based on a quadtree implementation from https://codereview.stackexchange.com/questions/84374/quadtree-implementation with several modifications.
 
@@ -12,7 +13,8 @@ Quadtree<Photoreceptor>::Quadtree() {
 	ne = nullptr;
 	sw = nullptr;
 	se = nullptr;
-	boundary = QuadRegion(Point(5.0, 5.0), Point(5.0, 5.0));
+
+	boundary = QuadRegion(Point(5.0,5.0), Point(5.0,5.0));
 	position = "hello";
 	objects = std::vector< Data<Photoreceptor> >();
 }
@@ -41,8 +43,9 @@ Quadtree<Photoreceptor>::~Quadtree()
 //template <typename T>
 void Quadtree<Photoreceptor>::subdivide()
 {
-	Point qSize = Point(boundary.halfSize.x, boundary.halfSize.y);
+	Point qSize = Point(boundary.halfSize.x/2, boundary.halfSize.y/2);
 	Point qCentre = Point(boundary.centre.x - qSize.x, boundary.centre.y - qSize.y);
+
 	nw = new Quadtree(QuadRegion(qCentre, qSize));
 
 	qCentre = Point(boundary.centre.x + qSize.x, boundary.centre.y - qSize.y);
@@ -54,8 +57,13 @@ void Quadtree<Photoreceptor>::subdivide()
 	qCentre = Point(boundary.centre.x + qSize.x, boundary.centre.y + qSize.y);
 	se = new Quadtree(QuadRegion(qCentre, qSize));
 }
-int counter = 0;
+//int counter = 0;
 //template <typename T>
+
+QuadRegion Quadtree<Photoreceptor>::getBoundary() {
+	return boundary;
+}
+
 bool Quadtree<Photoreceptor>::insert(Data<Photoreceptor> d)
 {
 	//std::cout << "putting stuff inside" << std::endl;
@@ -67,7 +75,7 @@ bool Quadtree<Photoreceptor>::insert(Data<Photoreceptor> d)
 	//std::cout << "inside boundary" << std::endl;
 	if (objects.size() < CAPACITY)
 	{
-		counter++;
+		//counter++;
 		objects.push_back(d);
 		return true;
 	}
@@ -75,7 +83,7 @@ bool Quadtree<Photoreceptor>::insert(Data<Photoreceptor> d)
 	if (nw == nullptr)
 	{
 		subdivide();
-	}
+	} 
 
 	if (nw->insert(d))
 	{
@@ -139,19 +147,24 @@ std::vector< Data<Photoreceptor> > Quadtree<Photoreceptor>::queryRange(QuadRegio
 	return pInRange;
 }
 
-void Quadtree<Photoreceptor>::getTree() {
+void Quadtree<Photoreceptor>::getTree(std::string prechain, int level) {
 	//std::cout << "in getTree()" << std::endl;
 	if (!this) {
 		//std::cout << "root is null";
 		return;
 	}
-
+	
 	for (auto i : this->objects)
 		std::cout << i.pos.x << ' ' << i.pos.y << std::endl;
 	//std::cout << (this->position).c_str() << "  ";
 
-	nw->getTree();
-	ne->getTree();
-	sw->getTree();
-	se->getTree();
+	std::cout << prechain << "Sublevel " << ++level << " NW Tree:\n";
+	nw->getTree(prechain + "Sublevel " + std::to_string(level) + " NW Tree", level);
+	std::cout << prechain << "Sublevel " << level << " NE Tree:\n";
+	ne->getTree(prechain + "Sublevel " + std::to_string(level) + " NE Tree", level);
+	std::cout << prechain << "Sublevel " << level << " SW Tree:\n";
+	sw->getTree(prechain + "Sublevel " + std::to_string(level) + " SW Tree", level);
+	std::cout << prechain << "Sublevel " << level << " SE Tree:\n";
+	se->getTree(prechain + "Sublevel " + std::to_string(level) + " SE Tree", level);
 }
+

@@ -3,6 +3,7 @@
 #include "Neuron.h"
 #include "Photon.h"
 #include <vector>
+#include "Point.h"
 
 #ifndef PHOTORECEPTOR
 #define PHOTORECEPTOR
@@ -16,9 +17,9 @@ public:
 		ROD,
 	};
 protected:
+	Point location;
 	//double eccentricity;
 	//double locationAngle; //Relative to straight up
-	double x, y;
 	std::vector<Photon> photonQueue;
 	ReceptorType receptorType;
 
@@ -27,10 +28,11 @@ protected:
 public:
 	virtual const char getType() override; // returns the type 
 	virtual const char getRGB(); // creates a virtual method which is overriden by rods and cones
-	double getX();
-	double getY();
+	virtual Point getPoint();
+	virtual void setPoint(Point newLoc);
 	static bool isAbsored(Photon p, ReceptorType t);
 	Photoreceptor();
+	Photoreceptor(Point loc);
 	void addPhotons(std::vector<Photon> newPhotons);
 	virtual int update(float elapsedSeconds);
 };

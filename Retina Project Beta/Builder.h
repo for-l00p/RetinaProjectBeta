@@ -4,7 +4,7 @@
 #ifndef _BUILDERFILE_
 #define _BUILDERFILE_
 
-const double RETINA_RADIUS = 24;
+const double RETINA_RADIUS = 12;
 Quadtree<Photoreceptor> mainBuilder();
 
 #endif
