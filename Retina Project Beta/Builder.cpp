@@ -72,9 +72,9 @@ std::vector<double> readInFromFile(std::string fileName) {
 }
 
 double getDistance(int type) {// 0 is rod, 1 is cone, 2 is ganglion
-	if (type == 1)
+	if (type == 0)
 		return rodDistribution(generator);
-	else if (type == 2)
+	else if (type == 1)
 		return coneDistribution(generator);
 	else
 		return ganglionDistribution(generator);
