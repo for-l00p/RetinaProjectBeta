@@ -3,7 +3,6 @@
 #include "Neuron.h"
 #include "Photon.h"
 #include <vector>
-#include "Point.h"
 
 #ifndef PHOTORECEPTOR
 #define PHOTORECEPTOR
@@ -17,9 +16,9 @@ public:
 		ROD,
 	};
 protected:
-	Point location;
 	//double eccentricity;
 	//double locationAngle; //Relative to straight up
+	Point location;
 	std::vector<Photon> photonQueue;
 	ReceptorType receptorType;
 

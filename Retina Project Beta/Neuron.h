@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include <vector>
+#include "Point.h"
 #ifndef NEURON
 #define NEURON
 
@@ -10,6 +11,7 @@ protected:
 	double cellMin;
 	double cellMax;
 	bool isGraded;
+	Point location;
 	std::vector<Neuron*> inputCenterConnectedCells;
 	std::vector<Neuron*> inputSurroundConnectedCells;
 	std::vector<Neuron*> outputConnectedCells;
@@ -20,6 +22,7 @@ public:
 	Neuron(double potentialMin, double potentialMax);
 	Neuron(double potentialMin, double potentialMax, bool graded);
 	void addInputCellCenter(Neuron* n);
+	virtual Point getPoint();
 	void addInputCellSurround(Neuron* n);
 	void resetConnections();
 	std::vector<std::vector<double>> acquireInputs();

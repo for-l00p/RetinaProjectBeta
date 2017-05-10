@@ -1,4 +1,11 @@
 #include "stdafx.h"
 #include "Ganglion.h"
 
-Ganglion::Ganglion(Point loc) : location(loc) {}
+Ganglion::Ganglion(Point loc) {
+	location = loc;
+}
+
+Point Ganglion::getPoint()
+{
+	return location;
+}

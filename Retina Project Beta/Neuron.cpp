@@ -30,6 +30,11 @@ void Neuron::addInputCellCenter(Neuron* n) {
 	inputCenterConnectedCells[inputCenterConnectedCells.size() - 1] = n;
 }
 
+Point Neuron::getPoint()
+{
+	return location;
+}
+
 void Neuron::addInputCellSurround(Neuron* n) {
 	inputSurroundConnectedCells.resize(inputSurroundConnectedCells.size() + 1);
 	inputSurroundConnectedCells[inputSurroundConnectedCells.size() - 1] = n;

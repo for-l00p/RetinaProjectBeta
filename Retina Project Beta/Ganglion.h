@@ -12,6 +12,8 @@ private:
 	Point location;
 public:
 	Ganglion(Point loc);
+	virtual Point getPoint();
+
 };
 
 #endif
