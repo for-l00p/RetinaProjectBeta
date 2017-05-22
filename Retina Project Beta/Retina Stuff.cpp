@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -15,91 +16,6 @@
 #include "Ganglion.h"
 #include "Builder.h"
 #include <SFML/Graphics.hpp>
-
-const double PIXELS_PER_MM = 50;
-
-Photoreceptor* builder(int num) {
-	// Method creates seqeuncial Rods and Cones depending position in the matrix
-	if (num % 2 == 0) {
-		Photoreceptor* p = new Rod(); // creates a new rod which is then returned
-		return p;
-	}
-	else {
-		static int count = 1; // allows for quick alteration of RGB cones being created 
-		if (count % 3 == 1) {
-			Photoreceptor* p = new Cone(Cone::RED);
-			count++;
-			return p;
-		}
-		else if (count % 3 == 2) {
-			Photoreceptor* p = new Cone(Cone::BLUE);
-			count++;
-			return p;
-		}
-		else {
-			Photoreceptor* p = new Cone(Cone::GREEN);
-			count++;
-			return p;
-		}
-	}
-}
-
-struct BuilderData {
-	float centerX;
-	float centerY;
-	float fovealRadius;
-};
-
-Photoreceptor* builderImage(BuilderData bd, int y, int x) {
-	float r = std::sqrtf((x - bd.centerX)*(x - bd.centerX) + (y - bd.centerY)*(y - bd.centerY));
-
-	if (r <= bd.fovealRadius) {
-		if (rand() % 3 < 2)
-			return new Cone(Cone::RED);
-		return new Cone(Cone::GREEN);
-	}
-	if (r <= bd.fovealRadius * 2) {
-		if (rand() % 2 < 1)
-			return new Rod();
-		int i = rand() % 10;
-		if (i < 1)
-			return new Cone(Cone::BLUE);
-		if (i < 4)
-			return new Cone(Cone::GREEN);
-		return new Cone(Cone::RED);
-	}
-
-	if (rand() % 4 < 3)
-		return new Rod();
-	int i = rand() % 10;
-	if (i < 1)
-		return new Cone(Cone::BLUE);
-	if (i < 4)
-		return new Cone(Cone::GREEN);
-	return new Cone(Cone::RED);
-
-}
-
-Rod* builderImageTempRods(BuilderData bd, int y, int x) {
-	return new Rod();
-
-}
-
-Cone* builderImageTempCones(BuilderData bd, int y, int x) {
-	float r = std::sqrtf((x - bd.centerX)*(x - bd.centerX) + (y - bd.centerY)*(y - bd.centerY));
-
-	if (r <= bd.fovealRadius) {
-		if (rand() % 3 < 2)
-			return new Cone(Cone::RED);
-		return new Cone(Cone::GREEN);
-	}
-	int i = rand() % 10;
-	if (i < 1)
-		return new Cone(Cone::BLUE);
-	if (i < 4)
-		return new Cone(Cone::GREEN);
-	return new Cone(Cone::RED);
-}
 
 float getRedColorComponent(sf::Color c) {
 	int num = c.toInteger();
@@ -119,48 +35,23 @@ float getBlueColorComponent(sf::Color c) {
 	return ((float)num) / 255;
 }
 
-sf::Image displayImageBuilder(int rows, int cols, std::vector<std::vector<Photoreceptor*>> x) {
-	sf::Image displayImage;
-	displayImage.create(cols, rows, sf::Color::Black);
-	for (int i = 0; i < cols; i++) {
-		for (int j = 0; j < rows; j++) {
-			sf::Color c;
-			if (x[j][i]->getType() == 'R')
-				c = sf::Color(64, 64, 64);
-			else {
-				if (x[j][i]->getRGB() == 'B')
-					c = sf::Color::Blue;
-				else if (x[j][i]->getRGB() == 'G')
-					c = sf::Color::Green;
-				else
-					c = sf::Color::Red;
-			}
-			displayImage.setPixel(i, j, c);
+void makeTreeText(std::string s, Quadtree<Photoreceptor> q) {
+	std::ofstream myfile;
+	myfile.open(s + ".txt");
+	myfile << "Number of Retina Cells: " << q.queryRange(q.getBoundary()).size() << "\n\n";
+
+	int counter = 0;
+	for each(Data<Photoreceptor> p in q.queryRange(q.getBoundary())) {
+		if (p.load->getPotential() <= p.load->getCellMin()) {
+			myfile << "Cell " << ++counter << ":\n========================\n";
+			myfile << "\n\tX Pos: " << p.pos.x << "\n\tY Pos: " << p.pos.y << "\n\tType: ";
+			if (p.load->getType() == 'C')
+				myfile << p.load->getRGB();
+			myfile << p.load->getType() << "\n\tPotential: " << p.load->getPotential() << "\n\n";
 		}
 	}
-	return displayImage;
-}
 
-void displaySpriteInWindow(sf::Image image) {
-	sf::Texture texture;
-	texture.loadFromImage(image);
-	sf::Sprite s;
-	s.setTexture(texture);
-	sf::RenderWindow window(sf::VideoMode(s.getGlobalBounds().width, s.getGlobalBounds().height), "Display");
-	while (window.isOpen())
-	{
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
-
-		window.clear();
-		window.draw(s);
-		window.display();
-	}
-	return;
+	myfile.close();
 }
 
 int main()
@@ -169,7 +60,11 @@ int main()
 	srand(std::time(0));
 	rand();
 
-	Quadtree<Photoreceptor> retina = mainBuilder();
+	Quadtree<Photoreceptor> photoreceptors = photoreceptorBuilder(90000000, 6000000);
+	Quadtree<Bipolar> bipolars = bipolarBuilder(photoreceptors, 14000000);
+	Quadtree<Ganglion> ganglia = ganglionBuilder(bipolars, 1000000);
+	//makeTreeText("Pre-Image Cells", photoreceptors);
+	//photoreceptors.printTreeBoundaries();
 
 	std::cout << "Enter name of image: ";
 	std::string imageName;
@@ -181,6 +76,7 @@ int main()
 	sf::Image image;
 	if (!image.loadFromFile(imageName)) {
 		std::cout << "\nOH SPONGEBOB, WHHYYYYYYY!!!\n\n";
+		return 0;
 	}
 
 	else {
@@ -192,18 +88,27 @@ int main()
 	const int bipolarRange = 3; // I've arbitrarily made the receptive fields a 3x3 square for the purposes of this test
 
 	//image.flipVertically();
+	//image.flipHorizontally();
 
-	std::cout << "Enter Distance of Image from Eye (in meters):\n>";
-	double distanceFromImage;
-	std::cin >> distanceFromImage;
+	std::cout << "Enter Size of Pixel (in millimeters):\n>";
+	double pixelSize;
+	std::cin >> pixelSize;
 
-	std::cout << "Enter Pixel Size (in meters):\n>";
-	double pixelSideSize;
-	std::cin >> pixelSideSize;
+	Point imagePosition;
+	std::cout << "Enter Image Center (in millimeters):\n X>";
+	std::cin >> imagePosition.x;
+	std::cout << " Y>";
+	std::cin >> imagePosition.y;
 
 	std::cout << "Enter Photons per Pixel:\n>";
 	int photonsPerPixel;
 	std::cin >> photonsPerPixel;
+
+	std::cout << "Faster (y/n)?\n>";
+	bool generatePhotoreceptorPics;
+	char c;
+	std::cin >> c;
+	generatePhotoreceptorPics = c == 'y' ? true : false;
 
 	std::vector<std::vector<Photon>> photons;
 	for (int i = 0; i < rows*cols; ++i) {
@@ -229,49 +134,26 @@ int main()
 	std::cout << "\nPhoton Generation Complete\n";
 
 	QuadRegion region;
-	QuadRegion imageRegion(Point(0,0), Point(0,0));
+	QuadRegion imageRegion(imagePosition, Point(pixelSize*image.getSize().x / 2, pixelSize*image.getSize().y / 2));
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
-			double xPos = (((j + .5 - cols / 2)*pixelSideSize)/distanceFromImage)*RETINA_RADIUS; //fix later
-			double yPos = (((i + .5 - rows / 2)*pixelSideSize) / distanceFromImage)*RETINA_RADIUS;	
-			region.centre = Point(xPos, yPos);
-			region.halfSize = Point((pixelSideSize / 2) / distanceFromImage * RETINA_RADIUS, (pixelSideSize / 2) / distanceFromImage * RETINA_RADIUS);
-			if (region.centre.x - region.halfSize.x < imageRegion.centre.x - imageRegion.halfSize.x)
-				imageRegion.halfSize.x = region.centre.x - region.halfSize.x;
-			if (region.centre.y - region.halfSize.y < imageRegion.centre.y - imageRegion.halfSize.y)
-				imageRegion.halfSize.y = region.centre.y - region.halfSize.y;
-			std::vector<Data<Photoreceptor>> receptorData = retina.queryRange(region);
-			for each (Data<Photoreceptor> d in receptorData){
-				d.neuron.addPhotons(photons[i*cols + j]);
-				d.neuron.update(0);
+			region = QuadRegion(Point(imagePosition.x - imageRegion.halfSize.x + (j + 0.5) * pixelSize, imagePosition.y - imageRegion.halfSize.y + (i + 0.5) * pixelSize), Point(pixelSize/2,pixelSize/2));
+			for each(Data<Photoreceptor> d in photoreceptors.queryRange(region)) {
+				d.load->addPhotons(photons[i*cols + j]);
+				d.load->update(0);
+			}
+			for each(Data<Bipolar> d in bipolars.queryRange(region)) {
+				d.load->update(0);
+			}
+			for each(Data<Ganglion> d in ganglia.queryRange(region)) {
+				d.load->update(0);
 			}
 		}
-		std::cout << "Photoreceptor Loading " << i * 100 / rows << "% Complete\n";
+		std::cout << "Neuron Loading " << i * 100 / rows << "% Complete\n";
 	}
 
-	std::cout << "\nPhotoreceptor Loading Complete\n";
-
-	/*for (int i = 0; i < rows; i++) {
-		std::vector<Bipolar*> currentRow;
-		for (int j = 0; j < cols; j++) {
-			currentRow.push_back(new Bipolar());
-			for (int k = -(bipolarRange / 2); k < (bipolarRange / 2) + 1; k++) {
-				for (int m = -(bipolarRange / 2); m < (int)(bipolarRange / 2) + 1; m++) {
-					if (i + k >= 0 && i + k < rows && j + m >= 0 && j + m < cols) {
-						if (m != 0 || k != 0)
-							currentRow[j]->addInputCellSurround(x[i + k][j + m]);
-						else
-							currentRow[j]->addInputCellCenter(x[i + k][j + m]);
-					}
-				}
-			}
-		}
-		y.push_back(currentRow);
-		std::cout << "Bipolar Loading " << i * 100 / rows << "% Complete\n";
-	}*/
-
-	std::cout << "Bipolar Loading Complete\n";
+	std::cout << "\Neuron Loading Complete\n";
 
 	/*std::vector<std::vector<double>> potentials;
 	for (int i = 0; i < rows; i++) {
@@ -289,83 +171,111 @@ int main()
 	}*/
 
 	sf::Image outputImageRods;
-	outputImageRods.create(retina.getBoundary().halfSize.x * 2 * PIXELS_PER_MM, retina.getBoundary().halfSize.y * 2 * PIXELS_PER_MM, sf::Color::Black);
+	outputImageRods.create(image.getSize().x, image.getSize().y, sf::Color::Black);
 
 	sf::Image outputImageCones;
-	outputImageRods.create(retina.getBoundary().halfSize.x * 2 * PIXELS_PER_MM, retina.getBoundary().halfSize.y * 2 * PIXELS_PER_MM, sf::Color::Black);
+	outputImageCones.create(image.getSize().x, image.getSize().y, sf::Color::Black);
+
+	sf::Image outputImageGanglia;
+	outputImageRods.create(image.getSize().x, image.getSize().y, sf::Color::Black);
+
 	
+	std::cout << "Image Region:\n\tCentre: (" << imageRegion.centre.x << ", " << imageRegion.centre.y << ")\n";
+	std::cout << "\tHalf-Size: (" << imageRegion.halfSize.x << ", " << imageRegion.halfSize.y << ")\n";
+
 	sf::Color pixelColor;
 
-	for (int i = 0; i < outputImageRods.getSize().y; ++i) {
-		for (int j = 0; j < outputImageRods.getSize().x; ++j) {
-			QuadRegion region(imageRegion.centre.x - imageRegion.halfSize.x + j*imageRegion.halfSize.x * 2.0 / outputImageRods.getSize().x,
-				imageRegion.centre.y - imageRegion.halfSize.y + i*imageRegion.halfSize.y * 2.0 / outputImageRods.getSize().y,
-				imageRegion.halfSize.x * 2.0 / outputImageRods.getSize().x, imageRegion.halfSize.y * 2.0 / outputImageRods.getSize().y);
-			
+	for (int i = 0; i < image.getSize().y; ++i) {
+		for (int j = 0; j < image.getSize().x; ++j) {
 			int rodCounter = 0;
 			double rodPotentialSum = 0;
-			Rod* dummyRod = new Rod();
-
 			int coneCounter = 0;
 			double conePotentialSumRed = 0;
 			double conePotentialSumGreen = 0;
 			double conePotentialSumBlue = 0;
-			Cone* dummyCone = new Cone(Photoreceptor::RED);
-			
-			for each (Data<Photoreceptor> d in retina.queryRange(region)) {
-				if(d.neuron.getType() == 'R'){
-					rodPotentialSum += d.neuron.getPotential();
-					rodCounter++;
-				}
-				else {
-					switch (d.neuron.getRGB()) {
-					case 'R':
-						conePotentialSumRed += d.neuron.getPotential();
-						break;
-					case 'G':
-						conePotentialSumGreen += d.neuron.getPotential();
-						break;
-					case 'B':
-						conePotentialSumGreen += d.neuron.getPotential();
-						break;
-					}
+			int gCounter = 0;
+			double gPotentialSum = 0;
+			Rod* dummyPtrRod = new Rod();
+			Cone* dummyPtrCone = new Cone(Photoreceptor::RED);
+			Ganglion* dummyPtrGanglion = new Ganglion();
 
-					coneCounter++;
+			region = QuadRegion(Point(imagePosition.x - imageRegion.halfSize.x + (j + 0.5) * pixelSize, imagePosition.y - imageRegion.halfSize.y + (i + 0.5) * pixelSize), Point(pixelSize / 2, pixelSize / 2));
+
+			for each(Data<Photoreceptor> d in photoreceptors.queryRange(region)) {
+				if (d.load->getType() == 'R') {
+					rodCounter++;
+					rodPotentialSum += d.load->getPotential();
+					continue;
+				}
+				coneCounter++;
+				switch (d.load->getRGB()) {
+				case 'R':
+					conePotentialSumRed += d.load->getPotential();
+					break;
+				case 'G':
+					conePotentialSumGreen += d.load->getPotential();
+					break;
+				case 'B':
+					conePotentialSumBlue += d.load->getPotential();
+					break;
 				}
 			}
-			if (rodCounter == 0) continue;
 
-			double avgRods = (rodPotentialSum/rodCounter - dummyRod->getCellMin()) / dummyRod->getPotentialRange();
-			outputImageRods.setPixel(i,j,sf::Color(avgRods, avgRods, avgRods));
+			if (rodCounter > 0) {
+				double avgRods = ((rodPotentialSum / rodCounter) - dummyPtrRod->getCellMin()) / dummyPtrRod->getPotentialRange();
+				pixelColor = sf::Color(avgRods * 255, avgRods * 255, avgRods * 255);
+				outputImageRods.setPixel(j, i, pixelColor);
+			}
+			if (coneCounter > 0) {
+				double avgRedCones = ((conePotentialSumRed / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
+				double avgGreenCones = ((conePotentialSumGreen / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
+				double avgBlueCones = ((conePotentialSumBlue / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
+				pixelColor = sf::Color(avgRedCones * 255, avgGreenCones * 255, avgBlueCones * 255);
+				outputImageCones.setPixel(j, i, pixelColor);
+			}
 
-			outputImageCones.setPixel(i, j, sf::Color((conePotentialSumRed/coneCounter - dummyCone->getCellMin())/dummyCone->getPotentialRange(),
-				(conePotentialSumGreen / coneCounter - dummyCone->getCellMin()) / dummyCone->getPotentialRange(),
-				(conePotentialSumBlue / coneCounter - dummyCone->getCellMin()) / dummyCone->getPotentialRange()));
+			for each(Data<Ganglion> d in ganglia.queryRange(region)) {
+				gPotentialSum += d.load->getPotential();
+				gCounter++;
+			}
+
+			if (gCounter > 0) {
+				double avgGanglia = ((gPotentialSum / gCounter) - dummyPtrGanglion->getCellMin() / dummyPtrRod->getPotentialRange());
+				pixelColor = sf::Color(avgGanglia * 255, avgGanglia * 255, avgGanglia * 255);
+			}
 		}
+		std::cout << "Neuron Pixel Generation " << i * 100 / rows << "% Complete\n";
 	}
 
-	std::cout << "Pixel Generation Complete\n";
+	std::cout << "Neuron Pixel Generation Complete\n";
+
+	sf::Texture gangliaOutputTexture;
+	gangliaOutputTexture.loadFromImage(outputImageGanglia);
+	sf::Sprite gangliaOutputSprite;
+	gangliaOutputSprite.setTexture(gangliaOutputTexture);
+	if (gangliaOutputTexture.getSize().x < 200)
+		gangliaOutputSprite.setScale(200 / outputImageGanglia.getSize().x, 200 / outputImageGanglia.getSize().y);
 
 	sf::Texture rodsOutputTexture;
 	rodsOutputTexture.loadFromImage(outputImageRods);
 	sf::Sprite rodsOutputSprite;
 	rodsOutputSprite.setTexture(rodsOutputTexture);
 	if (rodsOutputTexture.getSize().x < 200)
-		rodsOutputSprite.setScale(4.0f, 4.0f);
+		rodsOutputSprite.setScale(200 / outputImageRods.getSize().x, 200 / outputImageRods.getSize().y);
 
 	sf::Texture conesOutputTexture;
 	conesOutputTexture.loadFromImage(outputImageCones);
 	sf::Sprite conesOutputSprite;
 	conesOutputSprite.setTexture(conesOutputTexture);
 	if (conesOutputTexture.getSize().x < 200)
-		conesOutputSprite.setScale(4.0f, 4.0f);
+		conesOutputSprite.setScale(200 / outputImageCones.getSize().x, 200 / outputImageCones.getSize().y);
 
 	sf::RenderWindow window(sf::VideoMode(rodsOutputSprite.getGlobalBounds().width, rodsOutputSprite.getGlobalBounds().height), "Overall");
 	sf::RenderWindow window2(sf::VideoMode(rodsOutputSprite.getGlobalBounds().width, rodsOutputSprite.getGlobalBounds().height), "Rods");
 	sf::RenderWindow window3(sf::VideoMode(conesOutputSprite.getGlobalBounds().width, conesOutputSprite.getGlobalBounds().height), "Cones");
 
-	outputImageRods.saveToFile("Output/" + imageName + "OutputOverallRods.png");
-	outputImageCones.saveToFile("Output/" + imageName + "OutputOverallCones.png");
+	outputImageRods.saveToFile("Output/" + imageName.erase(imageName.size() - 4, imageName.size()) + "OutputRods.png");
+	outputImageCones.saveToFile("Output/" + imageName + "OutputCones.png");
 
 	while (window.isOpen() || window2.isOpen() || window3.isOpen())
 	{
@@ -386,8 +296,6 @@ int main()
 				window3.close();
 		}
 
-		window.display();
-
 		window2.clear();
 		window2.draw(rodsOutputSprite);
 		window2.display();
@@ -395,6 +303,10 @@ int main()
 		window3.clear();
 		window3.draw(conesOutputSprite);
 		window3.display();
+
+		window.clear();
+		window.draw(gangliaOutputSprite);
+		window.display();
 	}
 
 	return 0;

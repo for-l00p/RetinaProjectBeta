@@ -5,22 +5,6 @@
 
 Cone::Cone(ReceptorType t) {
 	receptorType = t; // stores RGB value which is unique to the cone
-	location = Point(0,0);
-}
-
-Cone::Cone(ReceptorType t, Point loc){
-	receptorType = t; // stores RGB value which is unique to the cone
-	location = loc;
-}
-
-Point Cone::getPoint()
-{
-	return location;
-}
-
-void Cone::setPoint(Point newLoc)
-{
-	location = newLoc;
 }
 
  const char Cone::getRGB() {

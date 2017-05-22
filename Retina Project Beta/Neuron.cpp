@@ -34,6 +34,16 @@ void Neuron::addInputCellSurround(Neuron* n) {
 	inputSurroundConnectedCells[inputSurroundConnectedCells.size() - 1] = n;
 }
 
+void Neuron::addInputCellCenter(std::vector<Neuron*> n) {
+	inputCenterConnectedCells.resize(inputCenterConnectedCells.size() + n.size());
+	inputCenterConnectedCells.insert(inputCenterConnectedCells.end(), n.begin(), n.end());
+}
+
+void Neuron::addInputCellSurround(std::vector<Neuron*> n) {
+	inputSurroundConnectedCells.resize(inputSurroundConnectedCells.size() + n.size());
+	inputSurroundConnectedCells.insert(inputSurroundConnectedCells.end(), n.begin(), n.end());
+}
+
 void Neuron::resetConnections() {
 	inputCenterConnectedCells = std::vector<Neuron*>{};
 	inputSurroundConnectedCells = std::vector<Neuron*>{};

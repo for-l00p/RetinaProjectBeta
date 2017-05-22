@@ -30,6 +30,18 @@ struct QuadRegion
 		return false;
 	}
 
+	bool contains(QuadRegion r) const
+	{
+		if ((centre.x - halfSize.x < r.centre.x - r.halfSize.x) &&
+			(centre.x + halfSize.x >= r.centre.x - r.halfSize.x) && 
+			(centre.y - halfSize.y < r.centre.y - r.halfSize.y) &&
+			(centre.y + halfSize.y >= r.centre.y - r.halfSize.y))
+		{
+			return true;
+		}
+		return false;
+	}
+
 	bool intersects(const QuadRegion& other) const
 	{
 		//this right > that left                                          this left <s that right
@@ -45,26 +57,43 @@ struct QuadRegion
 	}
 };
 
-template <typename T>
+struct QuadDifference
+{
+	QuadRegion quad1;
+	QuadRegion quad2;
 
+	QuadDifference(QuadRegion region1, QuadRegion region2) : quad1(region1), quad2(region2) {};
+
+	bool contains(Point a) const
+	{
+		if ((quad1.contains(a) && !quad1.contains(a)) || (!quad1.contains(a) && quad2.contains(a)))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool intersects(const QuadRegion& other) const
+	{
+		//this right > that left                                          this left <s that right
+		if ((other.intersects(quad1) && !quad2.contains(other)) || (other.intersects(quad2) && !quad1.contains(other)))
+		{
+			return true;
+		}
+		return false;
+	}
+};
+
+template <typename T>
 struct Data
 {
 	Point pos;
-	Photoreceptor neuron;
 	T* load;
 
-
-	Data(Photoreceptor cell) {
-		neuron = cell;
-		pos = cell.getPoint();
-	} 
-/*	T setPoint() {
-		pos = Point(cell.xc, cell.yc);
-	}*/
+	Data<T>(Point pos = Point(), T* data = NULL) : pos(pos), load(data) {};
 };
 
-
-template <typename T>
+template<class T>
 class Quadtree
 {
 protected:
@@ -76,20 +105,24 @@ protected:
 
 	QuadRegion boundary;
 	std::string position;
-	std::vector< Data<T> > objects;
+	std::vector<Data<T>> objects;
 
 	static constexpr int CAPACITY = 4;
 public:
 	Quadtree<T>();
 	Quadtree<T>(QuadRegion boundary);
 
-	~Quadtree();
+	~Quadtree<T>();
 
 	bool insert(Data<T> d);
 	void subdivide();
 	QuadRegion getBoundary();
-	std::vector< Data<T> > queryRange(QuadRegion range);
+	std::vector<Data<T>> queryRange(QuadRegion range);
+	std::vector<Data<T>> queryRange(QuadDifference range);
+	std::vector<T*> queryRangeObjects(QuadRegion range);
+	std::vector<T*> queryRangeObjects(QuadDifference range);
 	void getTree(std::string prechain, int level = 1);
+	void printTreeBoundaries(int level = 1);
 };
 
 #endif

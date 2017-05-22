@@ -15,9 +15,6 @@ public:
 	static constexpr double MEAN_DENSITY_CONSTANT() { return 15; } //Ignore these for now
 
 	Cone(ReceptorType t);
-	Cone(ReceptorType t, Point loc);
-	virtual Point getPoint();
-	virtual void setPoint(Point newLoc);
 	virtual const char getRGB() override;
 	virtual int update(float elapsedSeconds) override;
 	virtual const char getType() override;

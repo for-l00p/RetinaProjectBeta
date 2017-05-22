@@ -21,6 +21,8 @@ public:
 	Neuron(double potentialMin, double potentialMax, bool graded);
 	void addInputCellCenter(Neuron* n);
 	void addInputCellSurround(Neuron* n);
+	void addInputCellCenter(std::vector<Neuron*> n);
+	void addInputCellSurround(std::vector<Neuron*> n);
 	void resetConnections();
 	std::vector<std::vector<double>> acquireInputs();
 	virtual int update(float elapsedSeconds);

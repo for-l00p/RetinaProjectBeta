@@ -4,17 +4,8 @@
 
 const char Photoreceptor::getType() { return 'P'; } // returns the type 
 const char Photoreceptor::getRGB() { return '0'; } // creates a virtual method which is overriden by rod's and cones
-Photoreceptor::Photoreceptor(Point loc) : Neuron(-40, -65, true), location(loc) {}
 Photoreceptor::Photoreceptor() : Neuron(-40, -65, true) {}
 double Photoreceptor::calculatePotential(int photonsHit, float elapsedSeconds) { return -40.0; }
-
-Point Photoreceptor::getPoint() {
-	return location;
-}
-
-void Photoreceptor::setPoint(Point newLoc){
-	location = newLoc;
-}
 
 bool Photoreceptor::isAbsored(Photon p, Photoreceptor::ReceptorType t) {
 	if (rand() % 3 == 2) //TODO Implement probabilities (Stiles-Crawford, Spectral Sesnitivity, etc.)

@@ -21,21 +21,6 @@ Rod::Rod() {
 	receptorType = Photoreceptor::ROD;
 }
 
-Rod::Rod(Point loc){
-	receptorType = Photoreceptor::ROD;
-	location = loc;
-}
-
-Point Rod::getPoint()
-{
-	return location;
-}
-
-void Rod::setPoint(Point newLoc)
-{
-	location = newLoc;
-}
-
 int Rod::update(float elapsedSeconds) {
 	int photons = Photoreceptor::update(elapsedSeconds);
 	cellPotential = calculatePotential(photons, elapsedSeconds);

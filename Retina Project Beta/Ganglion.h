@@ -5,6 +5,7 @@
 #define GANGLION
 
 class Ganglion : public Neuron {
+public:
 	Ganglion();
 };
 
