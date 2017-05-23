@@ -15,6 +15,7 @@
 #include "Bipolar.h"
 #include "Ganglion.h"
 #include "Builder.h"
+#include "Quadtree.h"
 #include <SFML/Graphics.hpp>
 
 float getRedColorComponent(sf::Color c) {
@@ -35,19 +36,19 @@ float getBlueColorComponent(sf::Color c) {
 	return ((float)num) / 255;
 }
 
-void makeTreeText(std::string s, Quadtree<Photoreceptor> q) {
+void makeTreeText(std::string s, Quadtree<Photoreceptor>* q) {
 	std::ofstream myfile;
 	myfile.open(s + ".txt");
-	myfile << "Number of Retina Cells: " << q.queryRange(q.getBoundary()).size() << "\n\n";
+	myfile << "Number of Retina Cells: " << q->queryRange(q->getBoundary()).size() << "\n\n";
 
 	int counter = 0;
-	for each(Data<Photoreceptor> p in q.queryRange(q.getBoundary())) {
-		if (p.load->getPotential() <= p.load->getCellMin()) {
+	for each(Data<Photoreceptor>* p in q->queryRange(q->getBoundary())) {
+		if (p->load->getPotential() <= p->load->getCellMin()) {
 			myfile << "Cell " << ++counter << ":\n========================\n";
-			myfile << "\n\tX Pos: " << p.pos.x << "\n\tY Pos: " << p.pos.y << "\n\tType: ";
-			if (p.load->getType() == 'C')
-				myfile << p.load->getRGB();
-			myfile << p.load->getType() << "\n\tPotential: " << p.load->getPotential() << "\n\n";
+			myfile << "\n\tX Pos: " << p->pos.x << "\n\tY Pos: " << p->pos.y << "\n\tType: ";
+			if (p->load->getType() == 'C')
+				myfile << p->load->getRGB();
+			myfile << p->load->getType() << "\n\tPotential: " << p->load->getPotential() << "\n\n";
 		}
 	}
 
@@ -60,9 +61,9 @@ int main()
 	srand(std::time(0));
 	rand();
 
-	Quadtree<Photoreceptor> photoreceptors = photoreceptorBuilder(90000000, 6000000);
-	Quadtree<Bipolar> bipolars = bipolarBuilder(photoreceptors, 14000000);
-	Quadtree<Ganglion> ganglia = ganglionBuilder(bipolars, 1000000);
+	Quadtree<Photoreceptor>* photoreceptors = photoreceptorBuilder(90000000, 6000000);
+	Quadtree<Bipolar>* bipolars = bipolarBuilder(photoreceptors, 14000000);
+	Quadtree<Ganglion>* ganglia = ganglionBuilder(bipolars, 1000000);
 	//makeTreeText("Pre-Image Cells", photoreceptors);
 	//photoreceptors.printTreeBoundaries();
 
@@ -139,15 +140,15 @@ int main()
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
 			region = QuadRegion(Point(imagePosition.x - imageRegion.halfSize.x + (j + 0.5) * pixelSize, imagePosition.y - imageRegion.halfSize.y + (i + 0.5) * pixelSize), Point(pixelSize/2,pixelSize/2));
-			for each(Data<Photoreceptor> d in photoreceptors.queryRange(region)) {
-				d.load->addPhotons(photons[i*cols + j]);
-				d.load->update(0);
+			for each(Data<Photoreceptor>* d in photoreceptors->queryRange(region)) {
+				d->load->addPhotons(photons[i*cols + j]);
+				d->load->update(0);
 			}
-			for each(Data<Bipolar> d in bipolars.queryRange(region)) {
-				d.load->update(0);
+			for each(Data<Bipolar>* d in bipolars->queryRange(region)) {
+				d->load->update(0);
 			}
-			for each(Data<Ganglion> d in ganglia.queryRange(region)) {
-				d.load->update(0);
+			for each(Data<Ganglion>* d in ganglia->queryRange(region)) {
+				d->load->update(0);
 			}
 		}
 		std::cout << "Neuron Loading " << i * 100 / rows << "% Complete\n";
@@ -201,41 +202,43 @@ int main()
 
 			region = QuadRegion(Point(imagePosition.x - imageRegion.halfSize.x + (j + 0.5) * pixelSize, imagePosition.y - imageRegion.halfSize.y + (i + 0.5) * pixelSize), Point(pixelSize / 2, pixelSize / 2));
 
-			for each(Data<Photoreceptor> d in photoreceptors.queryRange(region)) {
-				if (d.load->getType() == 'R') {
-					rodCounter++;
-					rodPotentialSum += d.load->getPotential();
-					continue;
+			if (generatePhotoreceptorPics) {
+				for each(Data<Photoreceptor>* d in photoreceptors->queryRange(region)) {
+					if (d->load->getType() == 'R') {
+						rodCounter++;
+						rodPotentialSum += d->load->getPotential();
+						continue;
+					}
+					coneCounter++;
+					switch (d->load->getRGB()) {
+					case 'R':
+						conePotentialSumRed += d->load->getPotential();
+						break;
+					case 'G':
+						conePotentialSumGreen += d->load->getPotential();
+						break;
+					case 'B':
+						conePotentialSumBlue += d->load->getPotential();
+						break;
+					}
 				}
-				coneCounter++;
-				switch (d.load->getRGB()) {
-				case 'R':
-					conePotentialSumRed += d.load->getPotential();
-					break;
-				case 'G':
-					conePotentialSumGreen += d.load->getPotential();
-					break;
-				case 'B':
-					conePotentialSumBlue += d.load->getPotential();
-					break;
+
+				if (rodCounter > 0) {
+					double avgRods = ((rodPotentialSum / rodCounter) - dummyPtrRod->getCellMin()) / dummyPtrRod->getPotentialRange();
+					pixelColor = sf::Color(avgRods * 255, avgRods * 255, avgRods * 255);
+					outputImageRods.setPixel(j, i, pixelColor);
+				}
+				if (coneCounter > 0) {
+					double avgRedCones = ((conePotentialSumRed / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
+					double avgGreenCones = ((conePotentialSumGreen / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
+					double avgBlueCones = ((conePotentialSumBlue / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
+					pixelColor = sf::Color(avgRedCones * 255, avgGreenCones * 255, avgBlueCones * 255);
+					outputImageCones.setPixel(j, i, pixelColor);
 				}
 			}
 
-			if (rodCounter > 0) {
-				double avgRods = ((rodPotentialSum / rodCounter) - dummyPtrRod->getCellMin()) / dummyPtrRod->getPotentialRange();
-				pixelColor = sf::Color(avgRods * 255, avgRods * 255, avgRods * 255);
-				outputImageRods.setPixel(j, i, pixelColor);
-			}
-			if (coneCounter > 0) {
-				double avgRedCones = ((conePotentialSumRed / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
-				double avgGreenCones = ((conePotentialSumGreen / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
-				double avgBlueCones = ((conePotentialSumBlue / coneCounter) - dummyPtrCone->getCellMin() / dummyPtrCone->getPotentialRange());
-				pixelColor = sf::Color(avgRedCones * 255, avgGreenCones * 255, avgBlueCones * 255);
-				outputImageCones.setPixel(j, i, pixelColor);
-			}
-
-			for each(Data<Ganglion> d in ganglia.queryRange(region)) {
-				gPotentialSum += d.load->getPotential();
+			for each(Data<Ganglion>* d in ganglia->queryRange(region)) {
+				gPotentialSum += d->load->getPotential();
 				gCounter++;
 			}
 

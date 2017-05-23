@@ -5,8 +5,8 @@
 #define _BUILDERFILE_
 
 const double RETINA_RADIUS = 12;
-Quadtree<Photoreceptor> photoreceptorBuilder(int numRods, int numCones);
-Quadtree<Bipolar> bipolarBuilder(Quadtree<Photoreceptor> q, int numBipolars);
-Quadtree<Ganglion> ganglionBuilder(Quadtree<Bipolar> q, int numGanglia);
+Quadtree<class Photoreceptor>* photoreceptorBuilder(int numRods, int numCones);
+Quadtree<class Bipolar>* bipolarBuilder(Quadtree<class Photoreceptor>* q, int numBipolars);
+Quadtree<class Ganglion>* ganglionBuilder(Quadtree<class Bipolar>* q, int numGanglia);
 
 #endif

@@ -13,6 +13,7 @@
 #include "Neuron.h"
 #include "Cone.h"
 #include "Rod.h"
+//#include "Photoreceptor.h"
 #include "Bipolar.h"
 #include "Ganglion.h"
 #include "Quadtree.h"
@@ -24,11 +25,8 @@
 const double PI = 3.1415926535;
 const double probabilityRED=0.64;
 const double probabilityGREEN=0.32;
-//probabilityBlue= 0.02;
 
-Quadtree<Photoreceptor> photoreceptors = Quadtree<Photoreceptor>();
-Quadtree<Bipolar> bipolars = Quadtree<Bipolar>();
-Quadtree<Ganglion> ganglia = Quadtree<Ganglion>();
+//probabilityBlue= 0.02;
 
 const int numCone = 10000;//number of cones to be generated
 const int numRds = 10000;//number of rods to be generated
@@ -77,7 +75,7 @@ Point halfSizeBipolarsSurround(Point p) {
 	return Point(1, 1);
 }
 
-Data<Photoreceptor> buildRod() {
+Data<Photoreceptor>* buildRod() {
 	// Method creates rods and cones based on polar coordinates 
 
 	double ecc = getDistance(0);
@@ -86,11 +84,11 @@ Data<Photoreceptor> buildRod() {
 
 	double x = r*cos(theta);
 	double y = r*sin(theta);
-	Data<Photoreceptor> d(Point(x, y), new Rod());
+	Data<Photoreceptor>* d = new Data<Photoreceptor>(Point(x, y), new Rod());
 	return d;
 }
 
-Data<Photoreceptor> buildCone() {
+Data<Photoreceptor>* buildCone() {
 	// Method creates rods and cones based on polar coordinates 
 
 	double ecc = getDistance(1);
@@ -110,11 +108,11 @@ Data<Photoreceptor> buildCone() {
 		c = new Cone(Cone::GREEN);
 	else 
 		c = new Cone(Cone::BLUE);
-	Data<Photoreceptor> d(loc,c);
+	Data<Photoreceptor>* d = new Data<Photoreceptor>(loc,c);
 	return d;
 }
 
-Data<Bipolar> buildBipolar(Quadtree<Photoreceptor> q) {
+Data<Bipolar>* buildBipolar(Quadtree<Photoreceptor>* q) {
 	// Method creates rods and cones based on polar coordinates 
 
 	double ecc = getDistance(2);
@@ -124,14 +122,14 @@ Data<Bipolar> buildBipolar(Quadtree<Photoreceptor> q) {
 	double x = r*cos(theta);
 	double y = r*sin(theta);
 	Point p = Point(x, y);
-	Data<Bipolar> d(p, new Bipolar());
+	Data<Bipolar>* d = new Data<Bipolar>(p, new Bipolar());
 	QuadDifference region(QuadRegion(p, halfSizeBipolarsCenter(p)),QuadRegion(p, halfSizeBipolarsSurround(p)));
-	d.load->addInputCellCenter(*(std::vector<Neuron*> *)&q.queryRangeObjects(QuadRegion(p, halfSizeBipolarsCenter(p))));
-	d.load->addInputCellSurround(*(std::vector<Neuron*> *)&q.queryRangeObjects(region));
+	d->load->addInputCellCenter(*(std::vector<Neuron*> *)&q->queryRangeObjects(QuadRegion(p, halfSizeBipolarsCenter(p))));
+	d->load->addInputCellSurround(*(std::vector<Neuron*> *)&q->queryRangeObjects(region));
 	return d;
 }
 
-Data<Ganglion> buildGanglion(Quadtree<Bipolar> q) {
+Data<Ganglion>* buildGanglion(Quadtree<Bipolar>* q) {
 	// Method creates rods and cones based on polar coordinates 
 
 	double ecc = getDistance(2);
@@ -141,10 +139,10 @@ Data<Ganglion> buildGanglion(Quadtree<Bipolar> q) {
 	double x = r*cos(theta);
 	double y = r*sin(theta);
 	Point p = Point(x, y);
-	Data<Ganglion> d(p, new Ganglion());
+	Data<Ganglion>* d = new Data<Ganglion>(p, new Ganglion());
 	QuadDifference region(QuadRegion(p, halfSizeBipolarsCenter(p)), QuadRegion(p, halfSizeBipolarsSurround(p)));
-	d.load->addInputCellCenter(*(std::vector<Neuron*> *)&q.queryRangeObjects(QuadRegion(p, halfSizeBipolarsCenter(p))));
-	d.load->addInputCellSurround(*(std::vector<Neuron*> *)&q.queryRangeObjects(region));
+	d->load->addInputCellCenter(*(std::vector<Neuron*> *)&q->queryRangeObjects(QuadRegion(p, halfSizeBipolarsCenter(p))));
+	d->load->addInputCellSurround(*(std::vector<Neuron*> *)&q->queryRangeObjects(region));
 	return d;
 }
  
@@ -185,19 +183,19 @@ Photoreceptor* build(int x, int y) {
 	return new Cone(Cone::RED);
 }
 
-Quadtree<Photoreceptor> photoreceptorBuilder(int numRods, int numCones)
+Quadtree<Photoreceptor>* photoreceptorBuilder(int numRods, int numCones)
 {
 	srand((unsigned int)time(NULL));
-	photoreceptors = Quadtree<Photoreceptor>(QuadRegion(Point(0,0), Point(RETINA_RADIUS,RETINA_RADIUS)));
+	Quadtree<Photoreceptor>* photoreceptors = new Quadtree<Photoreceptor>(QuadRegion(Point(0,0), Point(RETINA_RADIUS,RETINA_RADIUS)));
 
 	for (int i = 0; i < numRods; i++) {
-		photoreceptors.insert(buildRod());
+		photoreceptors->insert(buildRod());
 		if (i % (numRods / 100) == 0)
 			std::cout << "Rod Loading " << i * 100 / numRods << "% Complete\n";
 	}
 
 	for (int i = 0; i < numCones; i++) {
-		photoreceptors.insert(buildCone());
+		photoreceptors->insert(buildCone());
 		if (i % (numCones / 100) == 0)
 			std::cout << "Cone Loading " << i * 100 / numCones << "% Complete\n";
 	} 
@@ -206,12 +204,12 @@ Quadtree<Photoreceptor> photoreceptorBuilder(int numRods, int numCones)
 	return photoreceptors;
 }
 
-Quadtree<Bipolar> bipolarBuilder(Quadtree<Photoreceptor> q, int numBipolars)
+Quadtree<Bipolar>* bipolarBuilder(Quadtree<Photoreceptor>* q, int numBipolars)
 {
 	srand((unsigned int)time(NULL));
-	bipolars = Quadtree<Bipolar>(QuadRegion(Point(0, 0), Point(RETINA_RADIUS, RETINA_RADIUS)));
+	Quadtree<Bipolar>* bipolars = new Quadtree<Bipolar>(QuadRegion(Point(0, 0), Point(RETINA_RADIUS, RETINA_RADIUS)));
 	for (int i = 0; i < numBipolars; i++) {
-		bipolars.insert(buildBipolar(q));
+		bipolars->insert(buildBipolar(q));
 		if (i % (numBipolars / 100) == 0)
 			std::cout << "Bipolar Loading " << i * 100 / numBipolars << "% Complete\n";
 	}
@@ -220,11 +218,12 @@ Quadtree<Bipolar> bipolarBuilder(Quadtree<Photoreceptor> q, int numBipolars)
 	return bipolars;
 }
 
-Quadtree<Ganglion> ganglionBuilder(Quadtree<Bipolar> q, int numGanglia) {
-	ganglia = Quadtree<Ganglion>(QuadRegion(Point(0, 0), Point(RETINA_RADIUS, RETINA_RADIUS)));
+Quadtree<Ganglion>* ganglionBuilder(Quadtree<Bipolar>* q, int numGanglia) {
+	Quadtree<Ganglion>* ganglia = new Quadtree<Ganglion>(QuadRegion(Point(0, 0), Point(RETINA_RADIUS, RETINA_RADIUS)));
 	for (int i = 0; i < numGanglia; i++) {
-		ganglia.insert(buildGanglion(q));
+		ganglia->insert(buildGanglion(q));
 		if (i % (numGanglia / 100) == 0)
 			std::cout << "Ganglion Loading " << i * 100 / numGanglia << "% Complete\n";
 	}
+	return ganglia;
 }
